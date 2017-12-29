@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-COPY rootfs /vrctlviz
+COPY rootfs /
 
 RUN chmod +x /vrctlviz \
 chmod +x /run.sh \
