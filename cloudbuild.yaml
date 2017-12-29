@@ -17,6 +17,7 @@ steps:
      export GOARCH=i386
      go get
      go build
+     ls
      mv vrctlviz vrctlviz-386
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
