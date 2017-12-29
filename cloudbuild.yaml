@@ -1,6 +1,22 @@
 steps:
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
+- name: 'gcr.io/cloud-builders/go'
+  args: ['generate']
+  env: ['PROJECT_ROOT=github.com/vrctlviz/collector']
+- name: 'gcr.io/cloud-builders/go'
+  args: ['test', './...']
+  env: ['PROJECT_ROOT=github.com/vrctlviz/collector']
+- name: 'gcr.io/cloud-builders/go'
+  args: ['install', '-a', '-ldflags', "'-s'", '-installsuffix', 'cgo', 'github.com/vrctlviz/collector']
+  env: [
+    'PROJECT_ROOT=github.com/vrctlviz/collector',
+    'CGO_ENABLED=0',
+    'GOOS=linux'
+  ]
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME", "-f", "Dockerfile", "."]
 images:
   - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
+  - "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME"
 
