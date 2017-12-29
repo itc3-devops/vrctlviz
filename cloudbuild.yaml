@@ -13,8 +13,16 @@ steps:
      cd /go/src/github.com/itc3-devops/vrctlviz
      export GOPATH=/go
      export GOBIN=/go/bin
+     export GOOS=linux
+     export GOARCH=amd64
      go get
      go build
+     mv vrctlviz vrctlviz-amd64
+     export GOOS=linux
+     export GOARCH=i386
+     go get
+     go build
+     mv vrctlviz vrctlviz-386
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
 - name: 'gcr.io/cloud-builders/gsutil'
