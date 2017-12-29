@@ -26,7 +26,9 @@ steps:
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'vrctlviz', 'gs://itc3-public/']
+  args: ['cp', 'vrctlviz-amd64', 'gs://itc3-public/']
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', 'vrctlviz-386', 'gs://itc3-public/']
 images:
   - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
 
