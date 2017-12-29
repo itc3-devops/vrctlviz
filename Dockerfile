@@ -13,6 +13,6 @@ COPY . /usr/src/app
 
 EXPOSE 8080
 
-ENV TRAFFIC_URL=sample_data.json
+ENV TRAFFIC_URL=/.shared/configs/viz_data.json
 ENV TRAFFIC_INTERVAL=300
 CMD [ "npm", "run", "dev" ]
