@@ -1,0 +1,12 @@
+builds:
+  - binary: vrctl
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - 386
+      - arm64
+    goarm:
+      - 7
+    env:
+      - CGO_ENABLED=0
