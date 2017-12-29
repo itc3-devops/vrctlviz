@@ -6,7 +6,6 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json /usr/src/app/
-COPY viz_data.json /.shared/configs/viz_data.json
 RUN npm install
 
 # Bundle app source
