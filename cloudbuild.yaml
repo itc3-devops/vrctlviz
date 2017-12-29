@@ -1,24 +1,19 @@
 steps:
 - name: gcr.io/cloud-builders/go
-  entrypoint: 'ash' # because this is alpine
+  entrypoint: 'ash'
   args:
    - -c
    - |
-     # following commands are executed by the real go step, so
-     # we replicate it here
      . /builder/prepare_workspace.inc 
      prepare_workspace || exit
-     # Hey, let's print out the environment variables to
-     # see what's going on
      env | sort
      ls
-     # Then do what you normally do
      go get
      go build
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'collector', 'gs://itc3-public/']
+  args: ['cp', 'vrctlviz', 'gs://itc3-public/']
 images:
   - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
 
