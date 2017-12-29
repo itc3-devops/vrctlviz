@@ -1,14 +1,14 @@
 steps:
 - name: 'gcr.io/cloud-builders/go'
   args: ['generate']
-  env: ['PROJECT_ROOT=github.com/vrctlviz/collector']
+  env: ['PROJECT_ROOT=github.com/itc3-devops/vrctlviz/collector']
 - name: 'gcr.io/cloud-builders/go'
   args: ['test', './...']
-  env: ['PROJECT_ROOT=github.com/vrctlviz/collector']
+  env: ['PROJECT_ROOT=github.com/itc3-devops/vrctlviz/collector']
 - name: 'gcr.io/cloud-builders/go'
-  args: ['install', '-a', '-ldflags', "'-s'", '-installsuffix', 'cgo', 'github.com/vrctlviz/collector']
+  args: ['install', '-a', '-ldflags', "'-s'", '-installsuffix', 'cgo', 'github.com/itc3-devops/vrctlviz/collector']
   env: [
-    'PROJECT_ROOT=github.com/vrctlviz/collector',
+    'PROJECT_ROOT=github.com/itc3-devops/vrctlviz/collector',
     'CGO_ENABLED=0',
     'GOOS=linux'
   ]
