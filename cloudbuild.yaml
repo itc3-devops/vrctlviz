@@ -1,14 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/go'
-  args: ['generate']
-- name: 'gcr.io/cloud-builders/go'
-  args: ['test', './...']
-- name: 'gcr.io/cloud-builders/go'
-  args: ['install', '-a', '-ldflags', "'-s'", '-installsuffix', 'cgo', 'collector/main.go']
-  env: [
-    'CGO_ENABLED=0',
-    'GOOS=linux'
-  ]
+  args: ['build', 'collector/main.go']
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
 - name: "gcr.io/cloud-builders/docker"
