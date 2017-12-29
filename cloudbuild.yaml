@@ -14,7 +14,7 @@ steps:
      go build
      mv vrctlviz vrctlviz-amd64
      export GOOS=linux
-     export GOARCH=i386
+     export GOARCH=386
      go get
      go build
      ls
