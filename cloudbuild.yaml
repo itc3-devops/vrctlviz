@@ -8,6 +8,12 @@ steps:
      prepare_workspace || exit
      env | sort
      ls
+     mkdir -p /go/src/github.com/itc3-devops/vrctlviz
+     mkdir /go/bin
+     cp -a * /go/src/github.com/itc3-devops/vrctlviz
+     cd /go/src/github.com/itc3-devops/vrctlviz
+     export GOPATH=/go
+     export GOBIN=/go/bin
      go get
      go build
 - name: "gcr.io/cloud-builders/docker"
