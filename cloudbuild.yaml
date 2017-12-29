@@ -9,6 +9,9 @@ steps:
      prepare_workspace || exit
      env | sort
      ls
+     go get
+     go build
+     cp vrctlviz vrctlviz-alpine
      export GOOS=linux
      export GOARCH=amd64
      go get
