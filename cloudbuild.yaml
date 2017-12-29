@@ -12,11 +12,9 @@ steps:
      export GOARCH=amd64
      go get
      go build
-- name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
 - name: 'gcr.io/cloud-builders/gsutil'
   args: ['cp', 'vrctlviz', 'gs://itc3-public/']
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
 images:
   - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
-
-
