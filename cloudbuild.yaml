@@ -12,19 +12,10 @@ steps:
      export GOARCH=amd64
      go get
      go build
-     mv vrctlviz vrctlviz-amd64
-     export GOOS=linux
-     export GOARCH=386
-     go get
-     go build
-     ls
-     mv vrctlviz vrctlviz-386
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'vrctlviz-amd64', 'gs://itc3-public/']
-- name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'vrctlviz-386', 'gs://itc3-public/']
+  args: ['cp', 'vrctlviz', 'gs://itc3-public/']
 images:
   - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
 
