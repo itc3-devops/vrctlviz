@@ -11,6 +11,7 @@ steps:
      # Hey, let's print out the environment variables to
      # see what's going on
      env | sort
+     ls
      # Then do what you normally do
      go build
 - name: "gcr.io/cloud-builders/docker"
