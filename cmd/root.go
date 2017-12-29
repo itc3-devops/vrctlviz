@@ -19,6 +19,7 @@ import (
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -49,7 +50,7 @@ func Execute() {
 	}
 }
 
-func init() { 
+func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
@@ -60,6 +61,48 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	// Configure logging
+
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Only log the warning severity or above.
+
+	loglevel := os.Getenv("DEBUG")
+
+	if loglevel == "true" {
+
+		log.SetLevel(log.DebugLevel)
+
+	} else {
+
+		log.SetLevel(log.ErrorLevel)
+
+	}
+	// Set log location
+
+	var loglocation string
+	if viper.IsSet("LOGFILE") {
+		loglocation = viper.GetString("LOGFILE")
+	} else {
+		loglocation = "/var/log/collector.log"
+	}
+
+	if loglocation == "" {
+		log.SetOutput(os.Stdout)
+	} else {
+
+		createFile("/var/log/collector.log")
+		//create your file with desired read/write permissions
+		f, logErr := os.OpenFile(loglocation, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		if logErr != nil {
+			checkErr(logErr, "root - log")
+		}
+		//defer f.Close()
+		log.SetOutput(f)
+	}
+
 }
 
 // initConfig reads in config file and ENV variables if set.

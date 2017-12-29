@@ -174,9 +174,24 @@ func hostCommandWithOutput(command string, arguments []string) (string, error) {
 }
 
 func collectTcpMetrics() string {
-	createFile("/usr/bin/collect.sh")
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// Set path for collect script
+	filePath := string(home + "collect.sh")
+
+	// See if collect.sh exist
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		// If script does not exist, create it
+		writeCollectorScript()
+	}
+
 	command := "/bin/sh"
-	arguments := []string{"-c", "/usr/bin/collect.sh"}
+	arguments := []string{"-c", filePath}
 	stat, _ := hostCommandWithOutput(command, arguments)
 	return stat
 }
@@ -311,8 +326,8 @@ func changeFilePermissions(path string, permission os.FileMode) {
 	}
 }
 
-func writeCollectorScript(key string) {
-	log.WithFields(log.Fields{"run": "writeCollectorScript"}).Debug("Writing collector script", key)
+func writeCollectorScript() {
+	log.WithFields(log.Fields{"run": "writeCollectorScript"}).Debug("Writing collector script")
 	collectScript, err := Asset("data/collect.sh")
 	collectScriptString := fmt.Sprintf("%s", collectScript)
 
