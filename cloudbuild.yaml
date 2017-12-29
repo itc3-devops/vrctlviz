@@ -2,7 +2,7 @@ steps:
 - name: gcr.io/cloud-builders/git
   args: ['clone', 'https://github.com/itc3-devops/vrctlviz']
 - name: 'gcr.io/cloud-builders/go'
-  args: ['build', '.']
+  args: ['build', 'github.com/itc3-devops/vrctlviz']
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
 - name: 'gcr.io/cloud-builders/gsutil'
