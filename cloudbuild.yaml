@@ -13,6 +13,7 @@ steps:
      env | sort
      ls
      # Then do what you normally do
+     go get
      go build
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
