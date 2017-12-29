@@ -202,7 +202,7 @@ func etcdPutLeaseForever(key string, value string) {
 
 	tlsConfig, err := tlsInfo.ClientConfig()
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("Error exporting TLS config:  ", err)
+		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error exporting TLS config:  ", err)
 	}
 
 	cli, err := clientv3.New(clientv3.Config{
@@ -211,7 +211,7 @@ func etcdPutLeaseForever(key string, value string) {
 		TLS:         tlsConfig,
 	})
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("NOTIFY - Creating new ETCD client listener", err)
+		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("NOTIFY - Creating new ETCD client listener", err)
 	}
 	defer cli.Close() // make sure to close the client
 
@@ -220,7 +220,7 @@ func etcdPutLeaseForever(key string, value string) {
 	resp, err := cli.Put(context.TODO(), key, value, opts...)
 
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("Error putting key in ETCD:  ", err)
+		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
 
 	}
 
@@ -241,7 +241,7 @@ func getEtcdPutOptions() []clientv3.OpOption {
 	log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("Current Lease:  ", leaseStr)
 	id, err := strconv.ParseInt(leaseStr, 16, 64)
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("Error parsing LeaseID:  ", err)
+		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error parsing LeaseID:  ", err)
 
 	}
 
