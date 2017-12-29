@@ -1,5 +1,6 @@
 steps:
 - name: gcr.io/cloud-builders/go
+  env: ['PROJECT_ROOT=vrctlviz']
   entrypoint: 'ash'
   args:
    - -c
@@ -18,3 +19,4 @@ steps:
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
 images:
   - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
+
