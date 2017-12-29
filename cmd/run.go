@@ -238,6 +238,9 @@ func genTopLevelView() {
 	checkErr(jErr, "Node level view")
 	brjs := fmt.Sprintf("%s", j)
 	fmt.Println(brjs)
+	serialNumber := os.Getenv("SerialNumber")
+	key := string("mgmt/vrctlviz-nodes/" + serialNumber)
+	etcdPutLeaseForever(key, brjs)
 }
 
 func parseDestinationIpAddress(final string, source string) (string, tcpMetrics) {

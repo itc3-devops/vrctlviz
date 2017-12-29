@@ -196,73 +196,6 @@ func collectTcpMetrics() string {
 	return stat
 }
 
-func etcdKeyGetPrefix(key string) (string, string) {
-
-	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "generic - label")
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-		TLS:         tlsConfig,
-	})
-	checkErr(err, "generic - label")
-	defer cli.Close() // make sure to close the client
-
-	for i := range make([]int, 3) {
-		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-		_, err = cli.Put(ctx, fmt.Sprintf("key_%d", i), "value")
-		cancel()
-		checkErr(err, "generic - label")
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	resp, err := cli.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
-	cancel()
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, ev := range resp.Kvs {
-		fmt.Printf("%s : %s\n", ev.Key, ev.Value)
-
-		prefixValue = fmt.Sprintf("%s", ev.Value)
-		prefixKey = fmt.Sprintf("%s", ev.Key)
-
-	}
-	return prefixKey, prefixValue
-}
-
-func etcdKeyGetPrefixResp(key string) *clientv3.GetResponse {
-
-	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "generic - label")
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-		TLS:         tlsConfig,
-	})
-	checkErr(err, "generic - label")
-	defer cli.Close() // make sure to close the client
-
-	for i := range make([]int, 3) {
-		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-		_, err = cli.Put(ctx, fmt.Sprintf("key_%d", i), "value")
-		cancel()
-		checkErr(err, "generic - label")
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	resp, err := cli.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
-	cancel()
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, ev := range resp.Kvs {
-		fmt.Printf("%s : %s\n", ev.Key, ev.Value)
-
-	}
-	return resp
-}
-
 func etcdPutLeaseForever(key string, value string) {
 
 	loadHostEnvironmentVars()
@@ -324,6 +257,41 @@ func changeFilePermissions(path string, permission os.FileMode) {
 	if err := os.Chmod(path, permission); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func etcdKeyGetPrefix(key string) (string, string) {
+
+	tlsConfig, err := tlsInfo.ClientConfig()
+	checkErr(err, "generic - label")
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: dialTimeout,
+		TLS:         tlsConfig,
+	})
+	checkErr(err, "generic - label")
+	defer cli.Close() // make sure to close the client
+
+	for i := range make([]int, 3) {
+		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+		_, err = cli.Put(ctx, fmt.Sprintf("key_%d", i), "value")
+		cancel()
+		checkErr(err, "generic - label")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	resp, err := cli.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	cancel()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, ev := range resp.Kvs {
+		fmt.Printf("%s : %s\n", ev.Key, ev.Value)
+
+		prefixValue = fmt.Sprintf("%s", ev.Value)
+		prefixKey = fmt.Sprintf("%s", ev.Key)
+
+	}
+	return prefixKey, prefixValue
 }
 
 func writeCollectorScript() {
