@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"regexp"
 	"strconv"
@@ -38,7 +39,31 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		genTopLevelView()
+		ticker := time.NewTicker(1 * time.Second)
+		quit := make(chan struct{})
+		go func() {
+			for {
+				select {
+				case <-ticker.C:
+					// Do stuff
+					// Define wait timer between task cycles
+					time.Sleep(time.Second * 10)
+					genTopLevelView()
+
+				case <-quit:
+					ticker.Stop()
+					fmt.Println("Stopped the ticker!")
+					return
+				}
+			}
+		}()
+		// Determine how long the scheduled task should run
+		// 45000 hours is about 5 years
+		time.Sleep(45000 * time.Hour)
+		close(quit)
+		// Determine delay between running tasks
+		time.Sleep(10 * time.Nanosecond)
+
 	},
 }
 
@@ -109,16 +134,6 @@ type tcpTopLevelView struct {
 	Nodes            []tcpNodes       `json:"nodes"`
 	Connections      []tcpConnections `json:"connections"`
 	ServerUpdateTime string           `json:"serverUpdateTime"`
-}
-
-func parseSourceIpAddress(key string) string {
-	fmt.Println("Print key for source IP: ", key)
-	ipS = (between(key, ":|:", ":/:"))
-	if ipS != "" {
-		fmt.Println("Source IP: ****************:\n", ipS)
-		return ipS
-	}
-	return ""
 }
 
 func genConnectionsTcpData(d string, deviceIp string) []tcpConnections {
