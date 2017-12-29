@@ -1,5 +1,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/go'
+  args: ['get', 'collector']
+- name: 'gcr.io/cloud-builders/go'
   args: ['build', 'collector/main.go']
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "Dockerfile", "."]
