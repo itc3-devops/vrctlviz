@@ -1,5 +1,5 @@
 FROM scratch
 
-COPY gopath/bin/vrctlviz-alpine /vrctlviz
+COPY vrctlviz-alpine /vrctlviz
 
 ENTRYPOINT ["/vrctlviz", "run"]
