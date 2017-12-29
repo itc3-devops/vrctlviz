@@ -1,8 +1,10 @@
 FROM alpine:latest
 
-COPY vrctlviz-alpine /vrctlviz
+COPY rootfs /vrctlviz
+
 RUN chmod +x /vrctlviz \
+chmod +x /run.sh \
 && apk add --no-cache iproute2
 
-ENTRYPOINT [ "/vrctlviz", "run" ]
+ENTRYPOINT [ "/run.sh" ]
 

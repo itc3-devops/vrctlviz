@@ -11,7 +11,7 @@ steps:
      ls
      go get
      go build
-     cp vrctlviz vrctlviz-alpine
+     cp vrctlviz rootfs/vrctlviz-alpine
      export GOOS=linux
      export GOARCH=amd64
      go get
