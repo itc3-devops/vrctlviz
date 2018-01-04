@@ -20,10 +20,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
+	"github.com/coreos/etcd/pkg/transport"
 	"github.com/spf13/cobra"
 )
 
@@ -43,8 +45,13 @@ to quickly create a Cobra application.`,
 			log.Println(http.ListenAndServe("127.0.0.1:6060", nil))
 
 		}()
-
-		vizAutoRun()
+		resp := etcdHealthMemberListCheck()
+		if resp == true {
+			fmt.Println("ETCD cluster is healthy")
+			vizAutoRun()
+		} else {
+			fmt.Println("ETCD cluster unreachable, or unhealthy")
+		}
 
 	},
 }
@@ -91,9 +98,6 @@ func vizAutoRun() {
 }
 
 func genGlobalLevelGraph() {
-	// Load environment variables
-	loadHostEnvironmentVars()
-	cli := requestEtcdDialer()
 
 	// Set vars
 	renderer := "global"
@@ -101,8 +105,8 @@ func genGlobalLevelGraph() {
 	maxvol := float64(50000.100)
 
 	// Generate node level region/service hierarchy
-	regionServiceNodes := regionServiceNodes(cli)
-	regionServiceConnections := regionServiceConnections(cli)
+	regionServiceNodes := regionServiceNodes()
+	regionServiceConnections := regionServiceConnections()
 
 	ns := VizceralGraph{
 		Renderer:    renderer,
@@ -120,7 +124,26 @@ func genGlobalLevelGraph() {
 }
 
 // Creates connection information to be loaded into the top level global graph
-func regionServiceConnections(cli *clientv3.Client) []VizceralConnection {
+func regionServiceConnections() []VizceralConnection {
+	dialTimeout := 5 * time.Second
+	requestTimeout := 10 * time.Second
+	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+	tlsInfo := transport.TLSInfo{
+
+		CertFile:      os.Getenv("ETCDCTL_CERT"),
+		KeyFile:       os.Getenv("ETCDCTL_KEY"),
+		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
+	}
+	tlsConfig, err := tlsInfo.ClientConfig()
+	checkErr(err, "common - requestEtcdDialer")
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: dialTimeout,
+		TLS:         tlsConfig,
+	})
+	checkErr(err, "common - requestEtcdDialer")
+	defer cli.Close() // make sure to close the client
 	// create vars
 	vcg := []VizceralConnection{}
 	vc := VizceralConnection{}
@@ -129,7 +152,6 @@ func regionServiceConnections(cli *clientv3.Client) []VizceralConnection {
 	keyPrefix := "viz"
 
 	// get etcd keys based on connection prefix
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
 	checkErr(err, "vizceral - genTopLevelView - get node keys")
@@ -158,8 +180,26 @@ func regionServiceConnections(cli *clientv3.Client) []VizceralConnection {
 
 }
 
-func regionServiceNodes(cli *clientv3.Client) []VizceralNode {
+func regionServiceNodes() []VizceralNode {
+	dialTimeout := 5 * time.Second
+	requestTimeout := 10 * time.Second
+	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+	tlsInfo := transport.TLSInfo{
 
+		CertFile:      os.Getenv("ETCDCTL_CERT"),
+		KeyFile:       os.Getenv("ETCDCTL_KEY"),
+		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
+	}
+	tlsConfig, err := tlsInfo.ClientConfig()
+	checkErr(err, "common - requestEtcdDialer")
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: dialTimeout,
+		TLS:         tlsConfig,
+	})
+	checkErr(err, "common - requestEtcdDialer")
+	defer cli.Close() // make sure to close the client
 	// create vars
 	vng := []VizceralNode{}
 	vn := VizceralNode{}
@@ -167,7 +207,6 @@ func regionServiceNodes(cli *clientv3.Client) []VizceralNode {
 	keyPrefix := "viz"
 
 	// pull nodes from etcd
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
 	checkErr(err, "vizceral - genTopLevelView - get node keys")

@@ -47,9 +47,14 @@ to quickly create a Cobra application.`,
 			log.Println(http.ListenAndServe("127.0.0.1:6061", nil))
 
 		}()
+		resp := etcdHealthMemberListCheck()
+		if resp == true {
+			fmt.Println("ETCD cluster is healthy")
+			vizAutoRunCollector()
+		} else {
+			fmt.Println("ETCD cluster unreachable, or unhealthy")
+		}
 		// Get ETCD lease and start keepalive for auto ETCD cleanup
-		go requestEtcdLease()
-		vizAutoRunCollector()
 
 	},
 }
@@ -107,8 +112,7 @@ func vizAutoRunCollector() {
 }
 
 func genRegionalServiceLevelData() {
-	// Load environment variables
-	loadHostEnvironmentVars()
+
 	// Get timestamp and convert it to proper format
 	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	time := strintToInt64(ts)

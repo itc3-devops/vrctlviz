@@ -25,13 +25,6 @@ import (
 
 // Create vars
 
-var home string
-var err error
-var config string
-var configFile = "/root/.vrctlvizcfg"
-var varsFile = "/root/.vrctlvizcfg"
-var cfgFile = "/root/.vrctlvizcfg"
-
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "vrctlviz",
@@ -89,11 +82,7 @@ func init() {
 	// Set log location
 
 	var loglocation string
-	if viper.IsSet("Logfile") {
-		loglocation = viper.GetString("Logfile")
-	} else {
-		loglocation = "/var/log/vrctlviz.log"
-	}
+	loglocation = "/var/log/vrctlviz.log"
 
 	if loglocation == "" {
 		log.SetOutput(os.Stdout)
@@ -113,14 +102,6 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-
-	// Use config file from the flag.
-	viper.SetConfigFile(cfgFile)
-
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 }
