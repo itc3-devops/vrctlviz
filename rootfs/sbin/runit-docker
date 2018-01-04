@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 chmod +x /usr/bin/vrctlviz
 
@@ -8,3 +8,4 @@ sed -i 's/\r//g' "$x"
 done
 export LD_PRELOAD=/lib/runit-docker.so
 exec runsvdir /etc/service
+

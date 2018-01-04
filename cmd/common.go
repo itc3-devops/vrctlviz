@@ -107,9 +107,10 @@ func vizFileWrite(v *VizceralGraph) {
 	vJson, _ := json.Marshal(*v)
 	sJson := fmt.Sprintf("%s", vJson)
 
-	deleteFile("/usr/src/app/dist/sample_data.json")
-	createFile("/usr/src/app/dist/sample_data.json")
-	writeFile("/usr/src/app/dist/sample_data.json", sJson)
+	dataFile := os.Getenv("TRAFFIC_URL")
+
+	createFile(dataFile)
+	writeFile(dataFile, sJson)
 }
 
 // Read a Vizceral format file into a graph

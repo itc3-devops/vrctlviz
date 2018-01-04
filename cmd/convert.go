@@ -97,6 +97,7 @@ func vizAutoRun() {
 	time.Sleep(10 * time.Nanosecond)
 }
 
+// 
 func genGlobalLevelGraph() {
 
 	// Set vars
