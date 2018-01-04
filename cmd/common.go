@@ -313,13 +313,7 @@ func collectTcpMetrics() string {
 	}
 
 	// Set path for collect script
-	filePath := string(home + "collect.sh")
-
-	// See if collect.sh exist
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		// If script does not exist, create it
-		writeCollectorScript()
-	}
+	filePath := "/usr/bin/collect.sh"
 
 	command := "/bin/sh"
 	arguments := []string{"-c", filePath}
