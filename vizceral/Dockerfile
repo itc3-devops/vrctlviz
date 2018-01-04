@@ -12,7 +12,7 @@ RUN npm install
 COPY . /usr/src/app
 
 COPY rootfs /
-RUN chmod +x /usr/bin/vrctl
+RUN chmod +x /usr/bin/vrctlviz
 
 EXPOSE 8080
 
