@@ -11,8 +11,10 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
+
 COPY rootfs/ /
-RUN chmod +x /sbin/runit-docker \
+RUN apk add --no-cache bash runit \
+&& chmod +x /sbin/runit-docker \
 && sed -i 's/\r//g' /sbin/runit-docker
 
 EXPOSE 8080
