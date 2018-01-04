@@ -11,7 +11,7 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
-COPY rootfs /
+COPY rootfs/ /
 RUN chmod +x /usr/bin/vrctlviz
 
 EXPOSE 8080

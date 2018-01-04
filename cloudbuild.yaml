@@ -11,7 +11,8 @@ steps:
      ls
      go get
      go build
-     cp vrctlviz rootfs/vrctlviz-alpine
+     cp vrctlviz rootfs/usr/bin/vrctlviz
+     cp vrctlviz vizceral/rootfs/usr/bin/vrctlviz
      export GOOS=linux
      export GOARCH=amd64
      go get
@@ -19,12 +20,12 @@ steps:
 - name: 'gcr.io/cloud-builders/gsutil'
   args: ['cp', 'vrctlviz', 'gs://itc3-public/']
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'rootfs/vrctlviz-alpine', 'gs://itc3-public/']
+  args: ['cp', 'rootfs/usr/bin/vrctlviz', 'gs://itc3-public/']
 - name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/vizceral:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME", "-f", "Dockerfile", "."]
 images:
-  - "gcr.io/itc3-production/vrctlviz:$BRANCH_NAME"
+  - "gcr.io/itc3-production/vrctlviz/vizceral:$BRANCH_NAME"
   - "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME"
 
