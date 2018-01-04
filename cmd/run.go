@@ -41,10 +41,14 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		// Start server for exporting expvars
 		go func() {
 			log.Println(http.ListenAndServe("127.0.0.1:6061", nil))
 
 		}()
+		// Get ETCD lease and start keepalive for auto ETCD cleanup
+		go requestEtcdLease()
 		vizAutoRunCollector()
 
 	},
@@ -103,7 +107,8 @@ func vizAutoRunCollector() {
 }
 
 func genRegionalServiceLevelData() {
-
+	// Load environment variables
+	loadHostEnvironmentVars()
 	// Get timestamp and convert it to proper format
 	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	time := strintToInt64(ts)
@@ -146,8 +151,8 @@ func genRegionalServiceLevelData() {
 		j, jErr := json.MarshalIndent(ns, "", " ")
 		checkErr(jErr, "run - genGlobalLevelGraph")
 		brjs := fmt.Sprintf("%s", j)
-		sn := os.Getenv("SerialNumber")
-		key := string("viz/vrctlviz::sn::" + sn + "::node::" + deviceIp + "::vrf::mgmt")
+		lease := os.Getenv("Lease")
+		key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIp + "::vrf::global")
 		// upload to etcd and associate with our lease for automatic cleanup
 		etcdPutExistingLease(key, brjs)
 	}
@@ -232,8 +237,8 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 			j, jErr := json.MarshalIndent(cs, "", " ")
 			checkErr(jErr, "run - genGlobalLevelConnections")
 			brjs := fmt.Sprintf("%s", j)
-			sn := os.Getenv("SerialNumber")
-			key := string("viz/vrctlviz::sn::" + sn + "::connection::" + ipD + "::ip::" + deviceIp + "::vrf::mgmt")
+			lease := os.Getenv("Lease")
+			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + deviceIp + "::vrf::global")
 			// Copy value to etcd and associate with our existing lease for automatic cleanup
 			etcdPutExistingLease(key, brjs)
 		}

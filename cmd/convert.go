@@ -20,19 +20,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/pkg/transport"
 	"github.com/spf13/cobra"
 )
 
 // convertCmd represents the convert command
 var convertCmd = &cobra.Command{
 	Use:   "convert",
-	Short: "A brief description of your command",
+	Short: "Reads data from ETCD and converts to vizceral graph format",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -40,6 +38,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
 		go func() {
 			log.Println(http.ListenAndServe("127.0.0.1:6060", nil))
 
@@ -94,23 +93,7 @@ func vizAutoRun() {
 func genGlobalLevelGraph() {
 	// Load environment variables
 	loadHostEnvironmentVars()
-	// set etcd certificates to match etcdctl
-	var endpoints = []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
-	var tlsInfo = transport.TLSInfo{
-
-		CertFile:      os.Getenv("ETCDCTL_CERT"),
-		KeyFile:       os.Getenv("ETCDCTL_KEY"),
-		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
-	}
-	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "generic - label")
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-		TLS:         tlsConfig,
-	})
-	checkErr(err, "generic - label")
-	defer cli.Close() // make sure to close the client
+	cli := requestEtcdDialer()
 
 	// Set vars
 	renderer := "global"

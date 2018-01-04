@@ -24,7 +24,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Create vars
 var cfgFile string
+var home string
+var err error
+var config string
+var configFile = string(home + "~/.vrctlvizcfg")
+var varsFile = string(home + "~/.vrctlvizcfgvars")
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -56,7 +62,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.vrctlviz.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.vrctlvizcfg.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -83,17 +89,17 @@ func init() {
 	// Set log location
 
 	var loglocation string
-	if viper.IsSet("LOGFILE") {
-		loglocation = viper.GetString("LOGFILE")
+	if viper.IsSet("Logfile") {
+		loglocation = viper.GetString("Logfile")
 	} else {
-		loglocation = "/var/log/collector.log"
+		loglocation = "/var/log/vrctlviz.log"
 	}
 
 	if loglocation == "" {
 		log.SetOutput(os.Stdout)
 	} else {
 
-		createFile("/var/log/collector.log")
+		createFile(loglocation)
 		//create your file with desired read/write permissions
 		f, logErr := os.OpenFile(loglocation, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if logErr != nil {
@@ -112,15 +118,15 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
-		home, err := homedir.Dir()
+		home, err = homedir.Dir()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".vrctlviz" (without extension).
+		// Search config in home directory with name ".vrctlvizcfg" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".vrctlviz")
+		viper.SetConfigName(".vrctlvizcfg")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

@@ -32,8 +32,10 @@ import (
 	"github.com/joho/godotenv"
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
+var ConfigString string
 var prefixValue string
 var prefixKey string
 var etcdCertString string
@@ -119,12 +121,12 @@ func vizFileWrite(v *VizceralGraph) {
 func vizFileReadFile(fn string) *VizceralGraph {
 	data, err := ioutil.ReadFile(fn)
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "Format vizceral graph"}).Error("NOTIFY - Erro reading file", err)
+		log.WithFields(log.Fields{"common": "Format vizceral graph"}).Error("NOTIFY - Erro reading file", err)
 	}
 	v := new(VizceralGraph)
 	err = json.Unmarshal(data, v)
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "Format vizceral graph"}).Error("NOTIFY - Error formatting file into a graph", err)
+		log.WithFields(log.Fields{"common": "Format vizceral graph"}).Error("NOTIFY - Error formatting file into a graph", err)
 	}
 	return v
 }
@@ -134,7 +136,7 @@ func vizFileReadata(data string) *VizceralGraph {
 	v := new(VizceralGraph)
 	err := json.Unmarshal([]byte(data), v)
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "Format vizceral graph"}).Error("NOTIFY - Error formatting file into a graph", err)
+		log.WithFields(log.Fields{"common": "Format vizceral graph"}).Error("NOTIFY - Error formatting file into a graph", err)
 	}
 	return v
 }
@@ -142,19 +144,23 @@ func vizFileReadata(data string) *VizceralGraph {
 func checkErr(err error, label string) {
 	if err != nil {
 		fmt.Println(err.Error())
-		log.WithFields(log.Fields{"vrctl": label}).Error("NOTIFY - General Error Handler", err)
+		log.WithFields(log.Fields{"common": label}).Error("NOTIFY - General Error Handler", err)
 
 	}
 }
 
-// Loads environment variables by sourcing /.shared/status/vars file
+// Loads environment variables by sourcing ~/.vrctlvizcfgcfg.yaml file
 func loadHostEnvironmentVars() {
+	// check to see if environment variable file exist, if not create it
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		createConfigTemplate()
+	}
+
 	// Load environment variables
-	createFile("/.shared/status/vars")
-	envErr := godotenv.Load("/.shared/status/vars")
+	envErr := godotenv.Load(configFile)
 	if envErr != nil {
 
-		log.WithFields(log.Fields{"run": "Load Environment"}).Error("Dang! Error loading Environment Variables", envErr)
+		log.WithFields(log.Fields{"run": "Load Environment"}).Error("Error loading Environment Variables", envErr)
 	}
 }
 
@@ -291,7 +297,7 @@ func hostCommandWithOutput(command string, arguments []string) (string, error) {
 	out, err := exec.Command(command, arguments...).Output()
 	if err != nil {
 		fmt.Sprintf("Failed to execute command: %s", err)
-		checkErr(err, "hostCommandWithOutput")
+		checkErr(err, "common - hostCommandWithOutput")
 	}
 	outStr := string(out)
 	return outStr, err
@@ -322,37 +328,13 @@ func collectTcpMetrics() string {
 }
 
 func etcdPutExistingLease(key string, value string) {
-
-	// Load environment variables
-	loadHostEnvironmentVars()
-	var endpoints = []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
-	var tlsInfo = transport.TLSInfo{
-
-		CertFile:      os.Getenv("ETCDCTL_CERT"),
-		KeyFile:       os.Getenv("ETCDCTL_KEY"),
-		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
-	}
-	tlsConfig, err := tlsInfo.ClientConfig()
-	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error exporting TLS config:  ", err)
-	}
-
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-		TLS:         tlsConfig,
-	})
-	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("NOTIFY - Creating new ETCD client listener", err)
-	}
-	defer cli.Close() // make sure to close the client
-
+	cli := requestEtcdDialer()
 	opts := getEtcdPutOptions()
-	log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
+	log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
 	resp, err := cli.Put(context.TODO(), key, value, opts...)
 
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
+		log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
 
 	}
 
@@ -362,19 +344,11 @@ func etcdPutExistingLease(key string, value string) {
 
 func getEtcdPutOptions() []clientv3.OpOption {
 	loadHostEnvironmentVars()
-	serialNumber := os.Getenv("SerialNumber")
-	var err error
+	lease := os.Getenv("Lease")
 
-	// Get lease ID from active device key in ETCD, the most accurate source for the LeaseID
-	key1 := strings.Join([]string{"mgmt/active-devices", serialNumber}, "/")
-	_, leaseStr := etcdKeyGetPrefix(key1)
-
-	// leaseInt, err := strconv.ParseInt(leaseStr, 64)
-	log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Debug("Current Lease:  ", leaseStr)
-	id, err := strconv.ParseInt(leaseStr, 16, 64)
+	id, err := strconv.ParseInt(lease, 16, 64)
 	if err != nil {
-		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error parsing LeaseID:  ", err)
-
+		log.WithFields(log.Fields{"common": "getEtcdPutOptions"}).Error("Error parsing LeaseID:  ", err)
 	}
 
 	opts := []clientv3.OpOption{}
@@ -394,28 +368,13 @@ func changeFilePermissions(path string, permission os.FileMode) {
 func etcdKeyGetPrefix(key string) (string, string) {
 	// Load environment variables
 	loadHostEnvironmentVars()
-	var endpoints = []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
-	var tlsInfo = transport.TLSInfo{
-
-		CertFile:      os.Getenv("ETCDCTL_CERT"),
-		KeyFile:       os.Getenv("ETCDCTL_KEY"),
-		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
-	}
-	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "generic - label")
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-		TLS:         tlsConfig,
-	})
-	checkErr(err, "generic - label")
-	defer cli.Close() // make sure to close the client
+	cli := requestEtcdDialer()
 
 	for i := range make([]int, 3) {
 		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 		_, err = cli.Put(ctx, fmt.Sprintf("key_%d", i), "value")
 		cancel()
-		checkErr(err, "generic - label")
+		checkErr(err, "common - etcdKeyGetPrefix")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
@@ -454,4 +413,136 @@ func writeCollectorScript() {
 
 	writeFile(filePath, collectScriptString)
 	changeFilePermissions(filePath, 0777)
+}
+
+// read config template from binary storage and write it to local storage
+func createConfigTemplate() {
+
+	cf, err := Asset("data/template.yaml")
+	cfString := fmt.Sprintf("%s", cf)
+	fmt.Println("Print template: ", cfString)
+	log.WithFields(log.Fields{"common": "createConfigTemplate"}).Debug("Config file contents:", cf)
+	if err != nil {
+		log.WithFields(log.Fields{"common": "createConfigTemplate"}).Error("Cant find config template in binary")
+	}
+
+	// Create folder structure for file if not already exist
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+
+		createFile(configFile)
+		writeFile(configFile, cfString)
+
+	}
+
+}
+
+// Create a vars file for sourcing scripts based on values in the config file
+func createVarsFileFromConfig() {
+	// Delete any existing vars file
+	deleteFile(varsFile)
+
+	// Pass to config parser key, default value, and mapkey
+	// If no remapping required set mapkey to ""
+	appendConfigFile("etcdCluster.etcdEndpoints", "https://etcd.cluster.io:2375", "ETCDCTL_ENDPOINTS")
+	appendConfigFile("etcdCluster.etcdCert", "~/certs/etcd.pem", "ETCDCTL_CERT")
+	appendConfigFile("etcdCluster.etcdCa", "~/certs/ca.pem", "ETCDCTL_CACERT")
+	appendConfigFile("etcdCluster.etcdKey", "~/certs/key.pem", "ETCDCTL_KEY")
+
+}
+
+// iterate over each line in the config file and create a environment vars file for sourcing any scripts
+func appendConfigFile(Key string, DefaultValue string, MapKey string) {
+	// Open vars file for writing
+	v, vrctlVarsErr := os.OpenFile(varsFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	checkErr(vrctlVarsErr, "config template generator - open file for writing")
+	defer v.Close()
+
+	// check to see if variable needs to be remapped
+	var ConfigItem string
+	if MapKey == "" {
+		ConfigItem = Key
+	} else {
+		ConfigItem = MapKey
+	}
+
+	// Check to see if config parameter is set
+	if viper.IsSet(ConfigItem) {
+		// If value is set in config file add it to the vars file
+		ConfigItemVar := viper.GetString(ConfigItem)
+		ConfigString := string("export" + ConfigItem + "=" + ConfigItemVar)
+		log.WithFields(log.Fields{"common": "appendConfigFile"}).Debug("Getting value from config file and appending to vars file", ConfigItem, ConfigString)
+	} else {
+		// If no value is set in config file, set use the default value
+		ConfigItemVar := DefaultValue
+		ConfigString := string("export" + ConfigItem + "=" + ConfigItemVar)
+		log.WithFields(log.Fields{"common": "appendConfigFile"}).Debug("Getting value from config file and appending to vars file", ConfigItem, ConfigString)
+	}
+	// Append string to /.shared/status/vars file
+	if _, vrctlVarsErr := v.WriteString(ConfigString); vrctlVarsErr != nil {
+		panic(vrctlVarsErr)
+	}
+}
+
+func requestEtcdDialer() *clientv3.Client {
+	// Load environment variables
+	loadHostEnvironmentVars()
+	var endpoints = []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+	var tlsInfo = transport.TLSInfo{
+
+		CertFile:      os.Getenv("ETCDCTL_CERT"),
+		KeyFile:       os.Getenv("ETCDCTL_KEY"),
+		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
+	}
+	tlsConfig, err := tlsInfo.ClientConfig()
+	checkErr(err, "common - requestEtcdDialer")
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: dialTimeout,
+		TLS:         tlsConfig,
+	})
+	checkErr(err, "common - requestEtcdDialer")
+	defer cli.Close() // make sure to close the client
+	return cli
+}
+
+func requestEtcdLease() {
+
+	cli := requestEtcdDialer()
+
+	// request lease from ETCD
+	LeaseResp, leaseErr := cli.Grant(context.TODO(), 5)
+	if leaseErr != nil {
+		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
+	}
+
+	// convert lease to simple hex for use with etcdctl cli tool
+	lSimple := fmt.Sprintf("%016x", LeaseResp.ID)
+
+	leaseKey := strings.Join([]string{"vrctlviz::activeLeases", lSimple}, "::")
+
+	_, err = cli.Put(context.TODO(), leaseKey, lSimple, clientv3.WithLease(LeaseResp.ID))
+	if err != nil {
+		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Adding hex lease to active-devices key in Etcd", err)
+	}
+
+	// Write lease to vars file for reference
+	appendConfigFile("Lease", lSimple, "")
+
+	// start lease keepalive
+	go leaseKeepAliveCommandFunc(cli, LeaseResp.ID)
+
+}
+
+// leaseKeepAliveCommandFunc executes the "lease keep-alive" command.
+func leaseKeepAliveCommandFunc(cli *clientv3.Client, leaseId clientv3.LeaseID) {
+	id := leaseId
+
+	respc, kerr := cli.KeepAlive(context.TODO(), id)
+	if kerr != nil {
+		log.WithFields(log.Fields{"common": "leaseKeepAliveCommandFunc"}).Error("Starting Keepalive for lease", kerr)
+	}
+	for resp := range respc {
+		fmt.Println(*resp)
+	}
+
 }

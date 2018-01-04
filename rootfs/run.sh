@@ -1,5 +1,5 @@
 #!/bin/sh
-source ~/.vrctlviz.yaml
+source ~/.vrctlvizcfg.yaml
 
 chmod +x /usr/bin/vrctlviz
 
