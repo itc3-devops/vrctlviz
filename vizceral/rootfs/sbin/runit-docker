@@ -1,5 +1,9 @@
 #!/bin/sh
-source ~/.vrctlviz.yaml
+# Source vars file if one exist
+if [ ! -f ~/.vrctlvizcfg.yaml ]; then
+source ~/.vrctlvizcfg.yaml
+fi
+
 chmod +x /usr/bin/vrctlviz
 
 
