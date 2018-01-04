@@ -2,11 +2,9 @@ FROM alpine:latest
 
 COPY rootfs/ /
 
-RUN chmod +x /run.sh \
-&& sed -i 's/\r//g' /run.sh \
-&& sed -i 's/\r//g' /usr/bin/collect.sh \
-&& chmod +x /usr/bin/collect.sh \
-&& apk add --no-cache iproute2
+RUN chmod +x /sbin/runit-docker \
+&& sed -i 's/\r//g' /sbin/runit-docker
+&& apk add --no-cache iproute2 bash
 
-ENTRYPOINT [ "/run.sh" ]
+ENTRYPOINT ["/sbin/runit-docker"]
 
