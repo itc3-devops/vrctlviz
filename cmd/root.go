@@ -29,8 +29,9 @@ var cfgFile string
 var home string
 var err error
 var config string
-var configFile = string(home + "~/.vrctlvizcfg")
-var varsFile = string(home + "~/.vrctlvizcfgvars")
+var configFile = "/root/.vrctlvizcfg"
+var varsFile = "/root/.vrctlvizcfg"
+var cfgFile = "/root/.vrctlvizcfg"
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -113,20 +114,10 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
+
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err = homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
 
-		// Search config in home directory with name ".vrctlvizcfg" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".vrctlvizcfg")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
