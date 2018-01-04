@@ -18,6 +18,5 @@ EXPOSE 8080
 
 ENV TRAFFIC_URL=sample_data.json
 ENV TRAFFIC_INTERVAL=300
-CMD [ "npm", "run", "dev" ]
 
 ENTRYPOINT ["/sbin/runit-docker"]
