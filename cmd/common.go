@@ -127,6 +127,18 @@ func vizFileReadFile(fn string) *VizceralGraph {
 	return v
 }
 
+func serializeVizceral(data string) {
+	dataFile := os.Getenv("TRAFFIC_URL")
+	j, jErr := json.MarshalIndent(data, "", " ")
+	checkErr(jErr, "Viz - Regional level nodes")
+	// Write to file
+	brjs := fmt.Sprintf("%s", j)
+
+	createFile(dataFile)
+	writeFile(dataFile, brjs)
+	log.WithFields(log.Fields{"vrctl": "Vizceral watcher"}).Debug("NOTIFY - Updating dataset in VizServer container")
+}
+
 // Read a Vizceral format file into a graph
 func vizFileReadata(data string) *VizceralGraph {
 	v := new(VizceralGraph)

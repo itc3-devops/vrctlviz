@@ -71,6 +71,7 @@ func init() {
 }
 
 func vizAutoRun() {
+	// start scheduler to run the app at a certain interval
 	ticker := time.NewTicker(1 * time.Second)
 	quit := make(chan struct{})
 	go func() {
@@ -97,7 +98,7 @@ func vizAutoRun() {
 	time.Sleep(10 * time.Nanosecond)
 }
 
-// 
+// create top level graph
 func genGlobalLevelGraph() {
 
 	// Set vars
@@ -121,6 +122,7 @@ func genGlobalLevelGraph() {
 
 	v := vizFileReadata(n)
 	vizFileWrite(v)
+	// serializeVizceral(n)
 
 }
 
@@ -205,7 +207,7 @@ func regionServiceNodes() []VizceralNode {
 	vng := []VizceralNode{}
 	vn := VizceralNode{}
 
-	keyPrefix := "viz"
+	keyPrefix := "viz/vrctlviz::lease::"
 
 	// pull nodes from etcd
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -222,6 +224,7 @@ func regionServiceNodes() []VizceralNode {
 		// filter out anything that is not a node key
 		if strings.Contains(cKey, "node") {
 
+			fmt.Println("Print output: ", cValue)
 			// unmarshall value into struct
 			err := json.Unmarshal([]byte(cValue), &vn)
 			if err != nil {
