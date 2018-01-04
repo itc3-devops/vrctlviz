@@ -1,4 +1,4 @@
 #!/bin/bash
-source /.shared/status/vars
+source ~/.vrctlviz.yaml
 
 npm run dev 

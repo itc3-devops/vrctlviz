@@ -1,4 +1,7 @@
 #!/bin/sh
+source ~/.vrctlviz.yaml
+chmod +x /usr/bin/vrctlviz
+
 
 for x in $(find /etc/service -iname run); do
 chmod +x "$x"

@@ -1,3 +1,6 @@
 #!/bin/sh
-source /.shared/status/vars
-/vrctlviz run
+source ~/.vrctlviz.yaml
+
+chmod +x /usr/bin/vrctlviz
+
+/usr/bin/vrctlviz run

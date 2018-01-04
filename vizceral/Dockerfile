@@ -12,7 +12,7 @@ RUN npm install
 COPY . /usr/src/app
 
 COPY rootfs/ /
-RUN chmod +x /usr/bin/vrctlviz
+RUN chmod +x /sbin/runit-docker
 
 EXPOSE 8080
 
