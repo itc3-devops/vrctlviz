@@ -18,14 +18,13 @@ import (
 	"fmt"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 // Create vars
-var cfgFile string
+
 var home string
 var err error
 var config string
@@ -115,10 +114,8 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-
-	}
+	// Use config file from the flag.
+	viper.SetConfigFile(cfgFile)
 
 	viper.AutomaticEnv() // read in environment variables that match
 
