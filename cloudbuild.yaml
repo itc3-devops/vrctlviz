@@ -11,8 +11,10 @@ steps:
      ls
      go get
      go build
-     cp vrctlviz rootfs/usr/bin/vrctlviz
+     cp vrctlviz rootfs/usr/bin
+     ls rootfs/usr/bin/vrctl
      cp vrctlviz vizceral/rootfs/usr/bin/vrctlviz
+     ls vizceral/rootfs/usr/bin
      export GOOS=linux
      export GOARCH=amd64
      go get
