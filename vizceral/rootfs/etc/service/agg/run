@@ -1,0 +1,3 @@
+#!/bin/bash
+source ~/.vrctlviz.yaml
+/usr/bin/vrctlviz convert

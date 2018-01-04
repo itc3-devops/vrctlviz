@@ -1,0 +1,4 @@
+#!/bin/bash
+source /.shared/status/vars
+
+npm run dev 

@@ -11,8 +11,13 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
+COPY rootfs /
+RUN chmod +x /usr/bin/vrctl
+
 EXPOSE 8080
 
 ENV TRAFFIC_URL=sample_data.json
 ENV TRAFFIC_INTERVAL=300
 CMD [ "npm", "run", "dev" ]
+
+ENTRYPOINT ["/sbin/runit-docker"]

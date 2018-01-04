@@ -15,8 +15,11 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -46,6 +49,96 @@ var tlsInfo = transport.TLSInfo{
 	TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 }
 
+// vizceral generates output in the NetflixOSS vizceral format
+// https://github.com/Netflix/vizceral/blob/master/DATAFORMATS.md
+
+// Metadata
+type VizceralMetadata struct {
+	Streaming int `json:"streaming"`
+}
+
+// Notice appears in the sidebar
+type VizceralNotice struct {
+	Title    string `json:"title,omitempty"`
+	Subtitle string `json:"subtitle,omitempty"`
+	Link     string `json:"link,omitempty"`
+	Severity int    `json:"severity,omitempty"`
+}
+
+// Levels of trafic in each state
+type VizceralLevels struct {
+	Danger  float64 `json:"danger,omitempty"`
+	Warning float64 `json:"warning,omitempty"`
+	Normal  float64 `json:"normal,omitempty"`
+}
+
+// One Connection
+type VizceralConnection struct {
+	Source   string           `json:"source,omitempty"`
+	Target   string           `json:"target,omitempty"`
+	Metadata VizceralMetadata `json:"metadata,omitempty"`
+	Metrics  VizceralLevels   `json:"metrics,omitempty"`
+	Status   VizceralLevels   `json:"status,omitempty"`
+	Notices  []VizceralNotice `json:"node,omitempty"`
+	Class    string           `json:"class,omitempty"`
+}
+
+// One node (region/service hierarchy)
+type VizceralNode struct {
+	Renderer    string               `json:"renderer,omitempty"` // 'region' or omit for service
+	Name        string               `json:"name,omitempty"`
+	MaxVolume   float64              `json:"maxVolume,omitempty"` // relative base for levels animation
+	Updated     int64                `json:"updated,omitempty"`   // Unix timestamp. Only checked on the top-level list of nodes. Last time the data was updated
+	Nodes       []VizceralNode       `json:"nodes,omitempty"`
+	Connections []VizceralConnection `json:"connections,omitempty"`
+	Notices     []VizceralNotice     `json:"notices,omitempty"`
+	Class       string               `json:"class,omitempty"` // 'normal', 'warning', or 'danger'
+	Metadata    VizceralMetadata     `json:"metadata,omitempty"`
+}
+
+// Global level of graph file format
+type VizceralGraph struct {
+	Renderer    string               `json:"renderer"` // 'global'
+	Name        string               `json:"name"`
+	MaxVolume   float64              `json:"maxVolume,omitempty"` // relative base for levels animation
+	Nodes       []VizceralNode       `json:"nodes,omitempty"`
+	Connections []VizceralConnection `json:"connections,omitempty"`
+}
+
+// print a Vizceral graph as json
+func vizFileWrite(v *VizceralGraph) {
+	vJson, _ := json.Marshal(*v)
+	sJson := fmt.Sprintf("%s", vJson)
+
+	deleteFile("/usr/src/app/dist/sample_data.json")
+	createFile("/usr/src/app/dist/sample_data.json")
+	writeFile("/usr/src/app/dist/sample_data.json", sJson)
+}
+
+// Read a Vizceral format file into a graph
+func vizFileReadFile(fn string) *VizceralGraph {
+	data, err := ioutil.ReadFile(fn)
+	if err != nil {
+		log.WithFields(log.Fields{"vrctl": "Format vizceral graph"}).Error("NOTIFY - Erro reading file", err)
+	}
+	v := new(VizceralGraph)
+	err = json.Unmarshal(data, v)
+	if err != nil {
+		log.WithFields(log.Fields{"vrctl": "Format vizceral graph"}).Error("NOTIFY - Error formatting file into a graph", err)
+	}
+	return v
+}
+
+// Read a Vizceral format file into a graph
+func vizFileReadata(data string) *VizceralGraph {
+	v := new(VizceralGraph)
+	err := json.Unmarshal([]byte(data), v)
+	if err != nil {
+		log.WithFields(log.Fields{"vrctl": "Format vizceral graph"}).Error("NOTIFY - Error formatting file into a graph", err)
+	}
+	return v
+}
+
 func checkErr(err error, label string) {
 	if err != nil {
 		fmt.Println(err.Error())
@@ -63,6 +156,12 @@ func loadHostEnvironmentVars() {
 
 		log.WithFields(log.Fields{"run": "Load Environment"}).Error("Dang! Error loading Environment Variables", envErr)
 	}
+}
+
+func prettyprint(b []byte) ([]byte, error) {
+	var out bytes.Buffer
+	err := json.Indent(&out, b, "", "  ")
+	return out.Bytes(), err
 }
 
 // sleep timer in seconds
@@ -113,6 +212,15 @@ func after(value string, a string) string {
 	return value[adjustedPos:len(value)]
 }
 
+// Convert string to int64
+func strintToInt64(s string) int64 {
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
 func createFile(path string) {
 	// Create folder structure for file if not already exist
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -152,6 +260,23 @@ func writeFile(path string, contents string) {
 		fmt.Println(err.Error())
 		return //same as above
 	}
+}
+
+func deleteFile(path string) error {
+
+	// detect if file exists
+	var _, err = os.Stat(path)
+
+	// create file if not exists
+	if os.IsNotExist(err) {
+		var file, err = os.Create(path)
+		checkErr(err, "generic - label") //okay to call os.exit()
+		defer file.Close()
+	}
+	// delete file
+	var err1 = os.Remove(path)
+	checkErr(err1, "Delete file")
+	return err1
 }
 
 func mkDir(dir string) {
@@ -196,10 +321,17 @@ func collectTcpMetrics() string {
 	return stat
 }
 
-func etcdPutLeaseForever(key string, value string) {
+func etcdPutExistingLease(key string, value string) {
 
+	// Load environment variables
 	loadHostEnvironmentVars()
+	var endpoints = []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+	var tlsInfo = transport.TLSInfo{
 
+		CertFile:      os.Getenv("ETCDCTL_CERT"),
+		KeyFile:       os.Getenv("ETCDCTL_KEY"),
+		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
+	}
 	tlsConfig, err := tlsInfo.ClientConfig()
 	if err != nil {
 		log.WithFields(log.Fields{"vrctl": "ETCD putLeaseForever"}).Error("Error exporting TLS config:  ", err)
@@ -260,7 +392,15 @@ func changeFilePermissions(path string, permission os.FileMode) {
 }
 
 func etcdKeyGetPrefix(key string) (string, string) {
+	// Load environment variables
+	loadHostEnvironmentVars()
+	var endpoints = []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+	var tlsInfo = transport.TLSInfo{
 
+		CertFile:      os.Getenv("ETCDCTL_CERT"),
+		KeyFile:       os.Getenv("ETCDCTL_KEY"),
+		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
+	}
 	tlsConfig, err := tlsInfo.ClientConfig()
 	checkErr(err, "generic - label")
 	cli, err := clientv3.New(clientv3.Config{
