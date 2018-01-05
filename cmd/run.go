@@ -155,7 +155,7 @@ func genRegionalServiceLevelData() {
 		j, jErr := json.MarshalIndent(ns, "", " ")
 		checkErr(jErr, "run - genGlobalLevelGraph")
 		brjs := fmt.Sprintf("%s", j)
-		lease := os.Getenv("Lease")
+		lease := getLeaseNumber()
 		key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIp + "::vrf::global")
 		// upload to etcd and associate with our lease for automatic cleanup
 		etcdPutExistingLease(key, brjs)
@@ -241,7 +241,7 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 			j, jErr := json.MarshalIndent(cs, "", " ")
 			checkErr(jErr, "run - genGlobalLevelConnections")
 			brjs := fmt.Sprintf("%s", j)
-			lease := os.Getenv("Lease")
+			lease := getLeaseNumber()
 			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + deviceIp + "::vrf::global")
 			// Copy value to etcd and associate with our existing lease for automatic cleanup
 			etcdPutExistingLease(key, brjs)

@@ -129,16 +129,17 @@ func vizFileReadFile(fn string) *VizceralGraph {
 }
 
 func serializeVizceral(data string) {
+
 	df := os.Getenv("TRAFFIC_URL")
 	dataFile := string("/usr/src/app/dist/" + df)
 	j, jErr := json.MarshalIndent(data, "", " ")
-	checkErr(jErr, "Viz - serializeVizceral")
-	// Write to file
+	checkErr(jErr, "Viz - Top level global vrf view")
 	brjs := fmt.Sprintf("%s", j)
-
+	fmt.Println(brjs)
+	deleteFile(dataFile)
 	createFile(dataFile)
 	writeFile(dataFile, brjs)
-	log.WithFields(log.Fields{"vrctlviz": "serializeVizceral"}).Debug("NOTIFY - Updating dataset in VizServer container")
+
 }
 
 // Read a Vizceral format file into a graph
@@ -628,4 +629,10 @@ func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 		fmt.Println(*resp)
 	}
 
+}
+
+func getLeaseNumber() string {
+	b := readFile("/root/lease")
+	l := string([]byte(b))
+	return l
 }

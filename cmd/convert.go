@@ -118,13 +118,15 @@ func genGlobalLevelGraph() {
 		Nodes:       regionServiceNodes,
 		Connections: regionServiceConnections,
 	}
-	n := fmt.Sprintf("%s", ns)
+	n := fmt.Sprintf("%v", ns)
 	// serialize and write data to file
 
-	// v := vizFileReadata(n)
-	// vizFileWrite(v)
+	v := vizFileReadata(n)
+	vizFileWrite(v)
+
 	serializeVizceral(n)
 
+	fmt.Println("Print v: \n", v)
 }
 
 // Creates connection information to be loaded into the top level global graph
@@ -153,7 +155,7 @@ func regionServiceConnections() []VizceralConnection {
 	vc := VizceralConnection{}
 
 	// set vars
-	keyPrefix := "viz"
+	keyPrefix := "viz/vrctlviz::lease::"
 
 	// get etcd keys based on connection prefix
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -226,7 +228,7 @@ func regionServiceNodes() []VizceralNode {
 		// filter out anything that is not a node key
 		if strings.Contains(cKey, "node") {
 
-			fmt.Println("Print output: ", cValue)
+			// fmt.Println("Print output: ", cValue)
 			// unmarshall value into struct
 			err := json.Unmarshal([]byte(cValue), &vn)
 			if err != nil {
