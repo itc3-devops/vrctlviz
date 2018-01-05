@@ -4,12 +4,11 @@
   "description": "Vizceral example app",
   "author": "Justin Reynolds <jreynolds@netflix.com>",
   "scripts": {
-    "clean": "rimraf dist && mkdirp dist",
     "lint": "eslint src --ext .js --ext .jsx --fix",
     "copy:fonts": "cpx \"./node_modules/source-sans-pro/**/*\" ./dist/fonts",
     "copy:json": "cpx \"./src/*.json\" ./dist",
     "dev-server": "webpack-dev-server --host=0.0.0.0 --content-base dist/ --history-api-fallback",
-    "dev": "npm-run-all clean --parallel copy:* dev-server",
+    "dev": "npm-run-all --parallel copy:* dev-server",
     "validate": "npm ls"
   },
   "engines": {
