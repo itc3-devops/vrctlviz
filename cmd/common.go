@@ -130,7 +130,7 @@ func vizFileReadFile(fn string) *VizceralGraph {
 
 func serializeVizceral(data string) {
 	df := os.Getenv("TRAFFIC_URL")
-	dataFile := string("/etc/service/dist/" + df)
+	dataFile := string("/usr/src/app/dist/" + df)
 	j, jErr := json.MarshalIndent(data, "", " ")
 	checkErr(jErr, "Viz - serializeVizceral")
 	// Write to file
