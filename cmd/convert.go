@@ -126,8 +126,7 @@ func genGlobalLevelGraph() {
 	j, jErr := json.MarshalIndent(ns, "", " ")
 	checkErr(jErr, "Viz - Top level global vrf view")
 	brjs := fmt.Sprintf("%s", j)
-	// fmt.Println(brjs)
-	createFile(dataFile)
+	fmt.Println(brjs)
 	writeFile(dataFile, brjs)
 }
 

@@ -238,29 +238,9 @@ func createFile(path string) {
 }
 
 func writeFile(path string, contents string) {
-	// If file does not exist, create directory structure then create file
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		dir, file := filepath.Split(path)
-		mkDir(dir)
-		createFile(file)
-	}
-	// open file using READ & WRITE permission
-	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
-	checkErr(err, "setup - writeFile")
-	defer file.Close()
-
-	// write some text to file
-	_, err = file.WriteString(contents)
+	err := ioutil.WriteFile(path, []byte(contents), 0666)
 	if err != nil {
-		fmt.Println(err.Error())
-		return //must return here for defer statements to be called
-	}
-
-	// save changes
-	err = file.Sync()
-	if err != nil {
-		fmt.Println(err.Error())
-		return //same as above
+		log.Fatal(err)
 	}
 }
 
