@@ -354,7 +354,7 @@ func dataSend(data string) float64 {
 
 	// add a 0 in front of the . to add the volume of the traffic graph
 	n2 := before(n1, ".")
-	n := strings.Join([]string{n2, "0"}, "")
+	n := strings.Join([]string{n2, "00"}, "")
 
 	// make sure string has  a . if not add one so we can convert to float64
 	if strings.Contains(n, ".") {
