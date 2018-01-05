@@ -129,6 +129,7 @@ func genGlobalLevelGraph() {
 	// fmt.Println(brjs)
 	deleteFile(dataFile)
 	createFile(dataFile)
+	writeFile(dataFile, brjs)
 }
 
 // Creates connection information to be loaded into the top level global graph
@@ -158,7 +159,7 @@ func regionServiceConnections() []VizceralConnection {
 
 	// set vars
 	keyPrefix := "viz/vrctlviz::lease::"
-	lease := getLeaseNumber()
+
 	// get etcd keys based on connection prefix
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
@@ -216,7 +217,7 @@ func regionServiceNodes() []VizceralNode {
 	vc := []VizceralConnection{}
 
 	keyPrefix := "viz/vrctlviz::lease::"
-	lease := getLeaseNumber()
+
 	// pull nodes from etcd
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
