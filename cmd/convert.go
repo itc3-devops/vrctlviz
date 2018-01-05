@@ -127,7 +127,6 @@ func genGlobalLevelGraph() {
 	checkErr(jErr, "Viz - Top level global vrf view")
 	brjs := fmt.Sprintf("%s", j)
 	// fmt.Println(brjs)
-	deleteFile(dataFile)
 	createFile(dataFile)
 	writeFile(dataFile, brjs)
 }
