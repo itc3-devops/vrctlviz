@@ -215,7 +215,7 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 		if strings.Contains(final, "ESTAB") {
 			// Parse our values out of the filtered Established strings
 			target, metrics, _, notices = parseTargetMetricsProtocol(final, source)
-			fmt.Println("Print ipD", ipD)
+			fmt.Println("Print target", target)
 		}
 
 		// statically set status to the same as metrics for now

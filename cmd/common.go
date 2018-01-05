@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -306,6 +307,76 @@ func collectTcpMetrics() string {
 	arguments := []string{"-c", filePath}
 	stat, _ := hostCommandWithOutput(command, arguments)
 	return stat
+}
+
+func RoutedInterface(network string, flags net.Flags) *net.Interface {
+	switch network {
+	case "ip", "ip4", "ip6":
+	default:
+		return nil
+	}
+	ift, err := net.Interfaces()
+	if err != nil {
+		return nil
+	}
+	for _, ifi := range ift {
+		if ifi.Flags&flags != flags {
+			continue
+		}
+		if _, ok := hasRoutableIP(network, &ifi); !ok {
+			continue
+		}
+		return &ifi
+
+	}
+	return nil
+}
+
+func hasRoutableIP(network string, ifi *net.Interface) (net.IP, bool) {
+	ifat, err := ifi.Addrs()
+	if err != nil {
+		return nil, false
+	}
+	for _, ifa := range ifat {
+		switch ifa := ifa.(type) {
+		case *net.IPAddr:
+			if ip := routableIP(network, ifa.IP); ip != nil {
+				return ip, true
+			}
+		case *net.IPNet:
+			if ip := routableIP(network, ifa.IP); ip != nil {
+				return ip, true
+			}
+		}
+	}
+	return nil, false
+}
+
+func routableIP(network string, ip net.IP) net.IP {
+	if !ip.IsLoopback() && !ip.IsLinkLocalUnicast() && !ip.IsGlobalUnicast() {
+		return nil
+	}
+	switch network {
+	case "ip4":
+		if ip := ip.To4(); ip != nil {
+			return ip
+		}
+	case "ip6":
+		if ip.IsLoopback() { // addressing scope of the loopback address depends on each implementation
+			return nil
+		}
+		if ip := ip.To16(); ip != nil && ip.To4() == nil {
+			return ip
+		}
+	default:
+		if ip := ip.To4(); ip != nil {
+			return ip
+		}
+		if ip := ip.To16(); ip != nil {
+			return ip
+		}
+	}
+	return nil
 }
 
 func etcdHealthMemberListCheck() bool {
