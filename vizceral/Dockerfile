@@ -1,5 +1,6 @@
 FROM mhart/alpine-node
 
+COPY rootfs/ /
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
