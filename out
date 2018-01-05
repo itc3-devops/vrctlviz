@@ -1,34 +1,697 @@
 ETCD cluster is healthy
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178872490877203 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178880059829400 [{region 100.70.255.254 50000.1 1515178872490877203 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 18.216.80.226 {0} {4.1 0.1 10.1} {4.1 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
+Print lease:  777960c57e917e12
+
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.10.1",
+ "maxVolume": 50000.1,
+ "updated": 1515181502953417882,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.2.1",
+ "maxVolume": 50000.1,
+ "updated": 1515181511284916573,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.253",
+ "maxVolume": 50000.1,
+ "updated": 1515181514858110641,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.254",
+ "maxVolume": 50000.1,
+ "updated": 1515181517460156384,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.251",
+ "maxVolume": 50000.1,
+ "updated": 1515181513842143618,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.10.1",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 10.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 10.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.2.1",
+ "target": "52.14.173.37",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 240.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 240.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.2.1 52.14.173.37 {0} {0 0.1 240.1} {0 0.1 240.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.253",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 170.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 170.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.253 35.199.6.77 {0} {0 0.1 170.1} {0 0.1 170.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.254",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 890.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 890.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.254 35.199.6.77 {0} {0 0.1 890.1} {0 0.1 890.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.251",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 960.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 960.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.251 35.199.6.77 {0} {0 0.1 960.1} {0 0.1 960.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+"{global edge 50000.1 [{region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}} {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}} {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}} {region INTERNET 0 1515181516477593000 [{region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}} {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}} {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}}] [] []  {0}}] [{100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 52.14.173.37 {0} {0 0.1 240.1} {0 0.1 240.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.253 35.199.6.77 {0} {0 0.1 170.1} {0 0.1 170.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 35.199.6.77 {0} {0 0.1 890.1} {0 0.1 890.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 960.1} {0 0.1 960.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}"
 Print v: 
  &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178872490877203 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178881881070000 [{region 100.70.255.254 50000.1 1515178872490877203 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.61.123 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
+Print lease:  777960c57e917e12
+
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.10.1",
+ "maxVolume": 50000.1,
+ "updated": 1515181502953417882,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.2.1",
+ "maxVolume": 50000.1,
+ "updated": 1515181511284916573,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.253",
+ "maxVolume": 50000.1,
+ "updated": 1515181514858110641,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.254",
+ "maxVolume": 50000.1,
+ "updated": 1515181517460156384,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.251",
+ "maxVolume": 50000.1,
+ "updated": 1515181513842143618,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.10.1",
+ "target": "10.255.1.1",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 970.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 970.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.10.1 10.255.1.1 {0} {0 0.1 970.1} {0 0.1 970.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.2.1",
+ "target": "52.14.173.37",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 240.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 240.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.2.1 52.14.173.37 {0} {0 0.1 240.1} {0 0.1 240.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.253",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 170.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 170.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.253 35.199.6.77 {0} {0 0.1 170.1} {0 0.1 170.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.254",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 890.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 890.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.254 35.199.6.77 {0} {0 0.1 890.1} {0 0.1 890.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.251",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 960.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 960.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.251 35.199.6.77 {0} {0 0.1 960.1} {0 0.1 960.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+"{global edge 50000.1 [{region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}} {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}} {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}} {region INTERNET 0 1515181518346113900 [{region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}} {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}} {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}}] [] []  {0}}] [{100.70.10.1 10.255.1.1 {0} {0 0.1 970.1} {0 0.1 970.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 52.14.173.37 {0} {0 0.1 240.1} {0 0.1 240.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.253 35.199.6.77 {0} {0 0.1 170.1} {0 0.1 170.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 35.199.6.77 {0} {0 0.1 890.1} {0 0.1 890.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 960.1} {0 0.1 960.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}"
 Print v: 
  &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178883727662500 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 100.70.255.251 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178885568937100 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 52.20.105.196 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178887429796100 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178878933980278 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178889259791200 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 100.70.255.254 {0} {0 3.794 160.1} {0 3.794 160.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}} {region INTERNET 0 1515178891087285300 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178877826206687 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178849640419232 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}} {region INTERNET 0 1515178892933649300 [{region 100.70.255.254 50000.1 1515178883606049496 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178894738510160 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}} {region INTERNET 0 1515178894820474200 [{region 100.70.255.254 50000.1 1515178894738510160 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178894738510160 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}} {region INTERNET 0 1515178896687760000 [{region 100.70.255.254 50000.1 1515178894738510160 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
-Print v: 
- &{  0 [] []}
-Print ns:  {global edge 50000.1 [{region 100.70.255.254 50000.1 1515178894738510160 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}} {region INTERNET 0 1515178898552156200 [{region 100.70.255.254 50000.1 1515178894738510160 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515178889292024942 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515178890511480884 [] [] [] normal {0}} {region 100.70.10.1 50000.1 1515178877366371862 [] [] [] normal {0}}] [] []  {0}}] [{100.70.255.254 166.170.55.69 {0} {0 18.995 20.1} {0 18.995 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 660.1} {0 0.1 660.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 166.170.55.69 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.10.1 35.199.6.77 {0} {0 0.1 10.1} {0 0.1 10.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}
+Print lease:  777960c57e917e12
+
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.10.1",
+ "maxVolume": 50000.1,
+ "updated": 1515181502953417882,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.2.1",
+ "maxVolume": 50000.1,
+ "updated": 1515181511284916573,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.253",
+ "maxVolume": 50000.1,
+ "updated": 1515181514858110641,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.254",
+ "maxVolume": 50000.1,
+ "updated": 1515181517460156384,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print all keys that pass the node filter:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd node keys:  {
+ "renderer": "region",
+ "name": "100.70.255.251",
+ "maxVolume": 50000.1,
+ "updated": 1515181513842143618,
+ "class": "normal",
+ "metadata": {
+  "streaming": 0
+ }
+}
+Print unmarshalled ndoes:  {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}}
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::node::100.70.10.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::777960c57e917e12::connection::::ip::100.70.10.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.10.1",
+ "target": "100.70.255.251",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 20.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 20.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.10.1 100.70.255.251 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::node::100.70.2.1::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403b19::connection::::ip::100.70.2.1::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.2.1",
+ "target": "52.14.173.37",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 240.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 240.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.2.1 52.14.173.37 {0} {0 0.1 240.1} {0 0.1 240.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::node::100.70.255.253::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403a75::connection::::ip::100.70.255.253::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.253",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 170.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 170.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.253 35.199.6.77 {0} {0 0.1 170.1} {0 0.1 170.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::node::100.70.255.254::vrf::global
+Print all keys:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::72f460c403403821::connection::::ip::100.70.255.254::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.254",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 890.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 890.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.254 35.199.6.77 {0} {0 0.1 890.1} {0 0.1 890.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::node::100.70.255.251::vrf::global
+Print all keys:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print all keys that pass connection filter:  viz/vrctlviz::lease::4ca960c76ccd443b::connection::::ip::100.70.255.251::vrf::global
+Print lease:  777960c57e917e12
+
+Print etcd connections key:  {
+ "source": "100.70.255.251",
+ "target": "35.199.6.77",
+ "metadata": {
+  "streaming": 0
+ },
+ "metrics": {
+  "warning": 0.1,
+  "normal": 960.1
+ },
+ "status": {
+  "warning": 0.1,
+  "normal": 960.1
+ },
+ "node": [
+  {
+   "title": "Title",
+   "subtitle": "Subtitle",
+   "link": "http://netmon.itc3.io"
+  }
+ ],
+ "class": "normal"
+}
+Print unmarshalled connections:  {100.70.255.251 35.199.6.77 {0} {0 0.1 960.1} {0 0.1 960.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}
+"{global edge 50000.1 [{region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}} {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}} {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}} {region INTERNET 0 1515181520254881900 [{region 100.70.10.1 50000.1 1515181502953417882 [] [] [] normal {0}} {region 100.70.2.1 50000.1 1515181511284916573 [] [] [] normal {0}} {region 100.70.255.253 50000.1 1515181514858110641 [] [] [] normal {0}} {region 100.70.255.254 50000.1 1515181517460156384 [] [] [] normal {0}} {region 100.70.255.251 50000.1 1515181513842143618 [] [] [] normal {0}}] [] []  {0}}] [{100.70.10.1 100.70.255.251 {0} {0 0.1 20.1} {0 0.1 20.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.2.1 52.14.173.37 {0} {0 0.1 240.1} {0 0.1 240.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.253 35.199.6.77 {0} {0 0.1 170.1} {0 0.1 170.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.254 35.199.6.77 {0} {0 0.1 890.1} {0 0.1 890.1} [{Title Subtitle http://netmon.itc3.io 0}] normal} {100.70.255.251 35.199.6.77 {0} {0 0.1 960.1} {0 0.1 960.1} [{Title Subtitle http://netmon.itc3.io 0}] normal}]}"
 Print v: 
  &{  0 [] []}

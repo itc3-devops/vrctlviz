@@ -48,10 +48,10 @@ to quickly create a Cobra application.`,
 		}()
 		resp := etcdHealthMemberListCheck()
 		if resp == true {
-			fmt.Println("ETCD cluster is healthy")
+			// fmt.Println("ETCD cluster is healthy")
 			vizAutoRun()
 		} else {
-			fmt.Println("ETCD cluster unreachable, or unhealthy")
+			// fmt.Println("ETCD cluster unreachable, or unhealthy")
 		}
 
 	},
@@ -86,7 +86,7 @@ func vizAutoRun() {
 
 			case <-quit:
 				ticker.Stop()
-				fmt.Println("Stopped the ticker!")
+				// fmt.Println("Stopped the ticker!")
 				return
 			}
 		}
@@ -118,15 +118,17 @@ func genGlobalLevelGraph() {
 		Nodes:       regionServiceNodes,
 		Connections: regionServiceConnections,
 	}
-	n := fmt.Sprintf("%v", ns)
+	// n := fmt.Sprintf("%v", ns)
 	// serialize and write data to file
 
-	v := vizFileReadata(n)
-	vizFileWrite(v)
-
-	serializeVizceral(n)
-
-	fmt.Println("Print v: \n", v)
+	df := os.Getenv("TRAFFIC_URL")
+	dataFile := string("/usr/src/app/dist/" + df)
+	j, jErr := json.MarshalIndent(ns, "", " ")
+	checkErr(jErr, "Viz - Top level global vrf view")
+	brjs := fmt.Sprintf("%s", j)
+	// fmt.Println(brjs)
+	deleteFile(dataFile)
+	createFile(dataFile)
 }
 
 // Creates connection information to be loaded into the top level global graph
@@ -156,7 +158,7 @@ func regionServiceConnections() []VizceralConnection {
 
 	// set vars
 	keyPrefix := "viz/vrctlviz::lease::"
-
+	lease := getLeaseNumber()
 	// get etcd keys based on connection prefix
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
@@ -168,20 +170,22 @@ func regionServiceConnections() []VizceralConnection {
 		// convert etcd key/values to strings
 		cKey := fmt.Sprintf("%s", ev.Key)
 		cValue := fmt.Sprintf("%s", ev.Value)
-
+		// fmt.Println("Print all keys: ", cKey)
 		// filter out anything that is not a connection key
 		if strings.Contains(cKey, "connection") {
-
+			// fmt.Println("Print all keys that pass connection filter: ", cKey)
+			// fmt.Println("Print lease: ", lease)
+			// fmt.Println("Print etcd connections key: ", cValue)
 			// unmarshall value into struct
 			err := json.Unmarshal([]byte(cValue), &vc)
 			if err != nil {
 				log.Fatalf("failed to decode: %s", err)
 			}
 			// add connection to the interface
+			// fmt.Println("Print unmarshalled connections: ", vc)
 			vcg = append(vcg, vc)
 		}
 	}
-
 	return vcg
 
 }
@@ -212,7 +216,7 @@ func regionServiceNodes() []VizceralNode {
 	vc := []VizceralConnection{}
 
 	keyPrefix := "viz/vrctlviz::lease::"
-
+	lease := getLeaseNumber()
 	// pull nodes from etcd
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
@@ -224,21 +228,22 @@ func regionServiceNodes() []VizceralNode {
 		// convert etcd key/values to strings
 		cKey := fmt.Sprintf("%s", ev.Key)
 		cValue := fmt.Sprintf("%s", ev.Value)
-
+		// fmt.Println("Print all keys: ", cKey)
 		// filter out anything that is not a node key
 		if strings.Contains(cKey, "node") {
-
-			// fmt.Println("Print output: ", cValue)
+			// fmt.Println("Print all keys that pass the node filter: ", cKey)
+			// fmt.Println("Print lease: ", lease)
+			// fmt.Println("Print etcd node keys: ", cValue)
 			// unmarshall value into struct
 			err := json.Unmarshal([]byte(cValue), &vn)
 			if err != nil {
 				log.Fatalf("failed to decode: %s", err)
 			}
+			// fmt.Println("Print unmarshalled ndoes: ", vn)
 			// add node to the interface
 			vng = append(vng, vn)
 		}
 	}
-
 	// Get timestamp and convert it to proper format
 	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	time := strintToInt64(ts)

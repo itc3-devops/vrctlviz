@@ -634,5 +634,6 @@ func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 func getLeaseNumber() string {
 	b := readFile("/root/lease")
 	l := string([]byte(b))
+	fmt.Println("Print lease: ", l)
 	return l
 }
