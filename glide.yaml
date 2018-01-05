@@ -1,0 +1,10 @@
+package: github.com/itc3-devops/vrctlviz
+import:
+- package: github.com/coreos/etcd
+  subpackages:
+  - clientv3
+  - pkg/transport
+- package: github.com/mitchellh/go-homedir
+- package: github.com/sirupsen/logrus
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
