@@ -94,7 +94,7 @@ func vizAutoRunCollector() {
 			case <-ticker.C:
 				// Do stuff
 				// Define wait timer between task cycles
-				time.Sleep(time.Second * 10)
+				time.Sleep(time.Second * 2)
 				genRegionalServiceLevelData()
 
 			case <-quit:
