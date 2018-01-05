@@ -13,9 +13,9 @@ steps:
      mkdir -p rootfs/usr/bin
      cp vrctlviz rootfs/usr/bin/vrctlviz
      ls rootfs/usr/bin
-     mkdir -p vizceral/rootfs/usr/bin
-     cp vrctlviz vizceral/rootfs/usr/bin/vrctlviz
-     ls vizceral/rootfs/usr/bin
+     mkdir -p converter/rootfs/usr/bin
+     cp vrctlviz converter/rootfs/usr/bin/vrctlviz
+     ls converter/rootfs/usr/bin
      cp vrctlviz vrctlviz-alpine
      export GOOS=linux
      export GOARCH=amd64
