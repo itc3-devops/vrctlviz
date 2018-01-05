@@ -28,7 +28,10 @@ steps:
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/vizceral:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME", "-f", "Dockerfile", "."]
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/converter:$BRANCH_NAME", "-f", "converter/Dockerfile", "converter"]
 images:
   - "gcr.io/itc3-production/vrctlviz/vizceral:$BRANCH_NAME"
+  - "gcr.io/itc3-production/vrctlviz/converter:$BRANCH_NAME"
   - "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME"
 
