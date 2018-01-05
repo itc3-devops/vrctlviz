@@ -72,6 +72,7 @@ func init() {
 }
 
 func vizAutoRun() {
+	Traffic := os.Getenv("TRAFFIC_INTERVAL")
 	// start scheduler to run the app at a certain interval
 	ticker := time.NewTicker(1 * time.Second)
 	quit := make(chan struct{})
@@ -81,7 +82,7 @@ func vizAutoRun() {
 			case <-ticker.C:
 				// Do stuff
 				// Define wait timer between task cycles
-				time.Sleep(time.Second * 10)
+				time.Sleep(time.Second * Traffic)
 				genGlobalLevelGraph()
 
 			case <-quit:

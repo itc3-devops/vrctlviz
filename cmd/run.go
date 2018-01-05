@@ -85,6 +85,7 @@ var metrics VizceralLevels
 var deviceName string
 
 func vizAutoRunCollector() {
+	Traffic := os.Getenv("TRAFFIC_INTERVAL")
 	ticker := time.NewTicker(1 * time.Second)
 	quit := make(chan struct{})
 	go func() {
@@ -93,7 +94,7 @@ func vizAutoRunCollector() {
 			case <-ticker.C:
 				// Do stuff
 				// Define wait timer between task cycles
-				time.Sleep(time.Second * 10)
+				time.Sleep(time.Second * Traffic)
 				genRegionalServiceLevelData()
 
 			case <-quit:
