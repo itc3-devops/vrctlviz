@@ -212,6 +212,7 @@ func regionServiceNodes() []VizceralNode {
 	defer cli.Close() // make sure to close the client
 	// create vars
 	vng := []VizceralNode{}
+	vig := []VizceralNode{}
 	vn := VizceralNode{}
 	vc := []VizceralConnection{}
 
@@ -252,7 +253,7 @@ func regionServiceNodes() []VizceralNode {
 		Renderer:    "region",
 		Name:        "INTERNET",
 		Connections: vc,
-		Nodes:       vng,
+		Nodes:       vig,
 		Updated:     time,
 	}
 	vng = append(vng, vni)
