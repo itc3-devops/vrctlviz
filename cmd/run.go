@@ -208,7 +208,7 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 		re_inside_whtsp := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
 		final := re_leadclose_whtsp.ReplaceAllString(input, "")
 		final = re_inside_whtsp.ReplaceAllString(final, " ")
-		// fmt.Println("Print final: ", final)
+		fmt.Println("Print final: ", final)
 
 		// Filter out metrics we want to use to build out each data struct
 		// Only focus on connections that are in an Established state

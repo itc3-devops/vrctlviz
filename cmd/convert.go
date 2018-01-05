@@ -206,6 +206,7 @@ func regionServiceNodes() []VizceralNode {
 	// create vars
 	vng := []VizceralNode{}
 	vn := VizceralNode{}
+	vi := VizceralNode{}
 
 	keyPrefix := "viz/vrctlviz::lease::"
 
@@ -234,6 +235,15 @@ func regionServiceNodes() []VizceralNode {
 			vng = append(vng, vn)
 		}
 	}
+
+	vni := RegionTopLevel{
+		Renderer:    "region",
+		Name:        "INTERNET",
+		Connections: cg,
+		Nodes:       ng,
+		Updated:     its,
+	}
+	vng = append(vng, vni)
 
 	return vng
 
