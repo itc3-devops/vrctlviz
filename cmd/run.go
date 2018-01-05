@@ -158,7 +158,7 @@ func genRegionalServiceLevelData() {
 		lease := getLeaseNumber()
 		key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIp + "::vrf::global")
 		// upload to etcd and associate with our lease for automatic cleanup
-		etcdPutExistingLease(key, brjs)
+		etcdPutShortLease(key, brjs)
 	}
 }
 
@@ -244,7 +244,7 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 			lease := getLeaseNumber()
 			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + deviceIp + "::vrf::global")
 			// Copy value to etcd and associate with our existing lease for automatic cleanup
-			etcdPutExistingLease(key, brjs)
+			etcdPutShortLease(key, brjs)
 		}
 
 	}

@@ -419,6 +419,50 @@ func etcdHealthMemberListCheck() bool {
 	return r
 }
 
+func etcdPutShortLease(key string, value string) {
+	dialTimeout := 5 * time.Second
+	requestTimeout := 10 * time.Second
+	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+	tlsInfo := transport.TLSInfo{
+
+		CertFile:      os.Getenv("ETCDCTL_CERT"),
+		KeyFile:       os.Getenv("ETCDCTL_KEY"),
+		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
+	}
+	tlsConfig, err := tlsInfo.ClientConfig()
+	checkErr(err, "common - requestEtcdDialer")
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   endpoints,
+		DialTimeout: dialTimeout,
+		TLS:         tlsConfig,
+	})
+	checkErr(err, "common - requestEtcdDialer")
+	defer cli.Close() // make sure to close the client
+	// request lease from ETCD
+	LeaseResp, leaseErr := cli.Grant(ctx, 10)
+	if leaseErr != nil {
+		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
+	}
+
+	opts := []clientv3.OpOption{}
+	if LeaseResp.ID != 0 {
+		opts = append(opts, clientv3.WithLease(clientv3.LeaseID(LeaseResp.ID)))
+	}
+
+	log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
+	resp, err := cli.Put(ctx, key, value, opts...)
+	cancel()
+
+	if err != nil {
+		log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
+
+	}
+
+	fmt.Println(*resp)
+
+}
+
 func etcdPutExistingLease(key string, value string) {
 	dialTimeout := 5 * time.Second
 	requestTimeout := 10 * time.Second
