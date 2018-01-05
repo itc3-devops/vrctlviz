@@ -26,6 +26,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
@@ -237,7 +238,18 @@ func createFile(path string) {
 	}
 }
 
+func writeFile1(path string, contents string) {
+	err := ioutil.WriteFile(path, []byte(contents), 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+var mutex = &sync.Mutex{}
+
 func writeFile(path string, contents string) {
+	mutex.Lock()
+	defer mutex.Unlock()
 	err := ioutil.WriteFile(path, []byte(contents), 0666)
 	if err != nil {
 		log.Fatal(err)
