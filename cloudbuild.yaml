@@ -9,6 +9,7 @@ steps:
      prepare_workspace || exit
      env | sort
      ls
+     go get
      go build
      mkdir -p rootfs/usr/bin
      cp vrctlviz rootfs/usr/bin/vrctlviz
@@ -19,6 +20,7 @@ steps:
      cp vrctlviz vrctlviz-alpine
      export GOOS=linux
      export GOARCH=amd64
+     go get
      go build
 - name: 'gcr.io/cloud-builders/gsutil'
   args: ['cp', 'vrctlviz', 'gs://itc3-public/']
