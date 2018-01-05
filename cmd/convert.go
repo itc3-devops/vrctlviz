@@ -82,7 +82,7 @@ func vizAutoRun() {
 			case <-ticker.C:
 				// Do stuff
 				// Define wait timer between task cycles
-				time.Sleep(time.Second * 2)
+				time.Sleep(time.Second * 5)
 				genGlobalLevelGraph()
 
 			case <-quit:
