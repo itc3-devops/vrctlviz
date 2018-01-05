@@ -108,8 +108,8 @@ func vizFileWrite(v *VizceralGraph) {
 	vJson, _ := json.Marshal(*v)
 	sJson := fmt.Sprintf("%s", vJson)
 
-	dataFile := os.Getenv("TRAFFIC_URL")
-
+	df := os.Getenv("TRAFFIC_URL")
+	dataFile := string("/usr/src/app/dist/" + df)
 	createFile(dataFile)
 	writeFile(dataFile, sJson)
 }
@@ -129,7 +129,8 @@ func vizFileReadFile(fn string) *VizceralGraph {
 }
 
 func serializeVizceral(data string) {
-	dataFile := os.Getenv("TRAFFIC_URL")
+	df := os.Getenv("TRAFFIC_URL")
+	dataFile := string("/usr/src/app/dist/" + df)
 	j, jErr := json.MarshalIndent(data, "", " ")
 	checkErr(jErr, "Viz - Regional level nodes")
 	// Write to file
