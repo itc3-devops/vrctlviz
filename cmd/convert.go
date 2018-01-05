@@ -21,6 +21,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -206,7 +207,7 @@ func regionServiceNodes() []VizceralNode {
 	// create vars
 	vng := []VizceralNode{}
 	vn := VizceralNode{}
-	vi := VizceralNode{}
+	vc := []VizceralConnection{}
 
 	keyPrefix := "viz/vrctlviz::lease::"
 
@@ -236,12 +237,16 @@ func regionServiceNodes() []VizceralNode {
 		}
 	}
 
-	vni := RegionTopLevel{
+	// Get timestamp and convert it to proper format
+	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+	time := strintToInt64(ts)
+
+	vni := VizceralNode{
 		Renderer:    "region",
 		Name:        "INTERNET",
-		Connections: cg,
-		Nodes:       ng,
-		Updated:     its,
+		Connections: vc,
+		Nodes:       vng,
+		Updated:     time,
 	}
 	vng = append(vng, vni)
 
