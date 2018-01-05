@@ -432,7 +432,7 @@ func etcdPutShortLease(key string, value string) {
 	checkErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// request lease from ETCD
-	LeaseResp, leaseErr := cli.Grant(ctx, 10)
+	LeaseResp, leaseErr := cli.Grant(ctx, 15)
 	if leaseErr != nil {
 		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
 	}
