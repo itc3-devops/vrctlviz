@@ -130,15 +130,15 @@ func vizFileReadFile(fn string) *VizceralGraph {
 
 func serializeVizceral(data string) {
 	df := os.Getenv("TRAFFIC_URL")
-	dataFile := string("/usr/src/app/dist/" + df)
+	dataFile := string("/etc/service/dist/" + df)
 	j, jErr := json.MarshalIndent(data, "", " ")
-	checkErr(jErr, "Viz - Regional level nodes")
+	checkErr(jErr, "Viz - serializeVizceral")
 	// Write to file
 	brjs := fmt.Sprintf("%s", j)
 
 	createFile(dataFile)
 	writeFile(dataFile, brjs)
-	log.WithFields(log.Fields{"vrctl": "Vizceral watcher"}).Debug("NOTIFY - Updating dataset in VizServer container")
+	log.WithFields(log.Fields{"vrctlviz": "serializeVizceral"}).Debug("NOTIFY - Updating dataset in VizServer container")
 }
 
 // Read a Vizceral format file into a graph

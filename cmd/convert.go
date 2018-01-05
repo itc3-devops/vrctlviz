@@ -120,9 +120,9 @@ func genGlobalLevelGraph() {
 	n := fmt.Sprintf("%s", ns)
 	// serialize and write data to file
 
-	v := vizFileReadata(n)
-	vizFileWrite(v)
-	// serializeVizceral(n)
+	// v := vizFileReadata(n)
+	// vizFileWrite(v)
+	serializeVizceral(n)
 
 }
 
