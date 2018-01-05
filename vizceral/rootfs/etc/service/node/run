@@ -1,7 +1,3 @@
 #!/bin/sh
-
-
-su www-data <<'EOF'
-nep run dev
-EOF
+exec npm run dev
 sleep 999d
