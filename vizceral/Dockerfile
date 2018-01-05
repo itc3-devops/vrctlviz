@@ -9,11 +9,12 @@ WORKDIR /usr/src/app
 COPY package.json /usr/src/app/
 RUN npm install
 
-# Bundle app source
-COPY . /usr/src/app
+RUN apk add --no-cache bash runit \
+&& chmod +x /sbin/runit-docker \
+&& sed -i 's/\r//g' /sbin/runit-docker
 
 EXPOSE 8080
 
 ENV TRAFFIC_URL=sample_data.json
 ENV TRAFFIC_INTERVAL=1
-CMD [ "npm", "run", "dev" ]
+ENTRYPOINT ["/sbin/runit-docker"]
