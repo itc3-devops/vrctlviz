@@ -594,7 +594,7 @@ func requestEtcdLease() {
 	writeFile("/root/lease", lSimple)
 
 	// start lease keepalive
-	leaseKeepAliveCommandFunc(LeaseResp.ID)
+	// leaseKeepAliveCommandFunc(LeaseResp.ID)
 
 }
 
