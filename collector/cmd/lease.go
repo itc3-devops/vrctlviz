@@ -27,7 +27,7 @@ var leaseCmd = &cobra.Command{
 	Long: `Gets ETCD lease, saves it to local file for future use
 	starts keepalive to keep lease active`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp := etcdHealthMemberListCheck()
+		resp := EtcdHealthMemberListCheck()
 		if resp == true {
 			fmt.Println("ETCD cluster is healthy")
 			requestEtcdLease()

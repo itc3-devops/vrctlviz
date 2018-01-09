@@ -1,7 +1,0 @@
-#!/bin/sh
-
-
-su www-data <<'EOF'
-nep run dev
-EOF
-sleep 999d

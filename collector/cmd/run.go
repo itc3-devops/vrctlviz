@@ -47,7 +47,7 @@ to quickly create a Cobra application.`,
 			log.Println(http.ListenAndServe("127.0.0.1:6061", nil))
 
 		}()
-		resp := etcdHealthMemberListCheck()
+		resp := EtcdHealthMemberListCheck()
 		if resp == true {
 			fmt.Println("ETCD cluster is healthy")
 			vizAutoRunCollector()
@@ -116,7 +116,7 @@ func genRegionalServiceLevelData() {
 
 	// Get timestamp and convert it to proper format
 	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-	time := strintToInt64(ts)
+	time := StrintToInt64(ts)
 
 	// Run script to collect vizceral data from local host
 	stats := collectTcpMetrics()
@@ -154,7 +154,7 @@ func genRegionalServiceLevelData() {
 	} else {
 		// serialize data for host hierarchy
 		j, jErr := json.MarshalIndent(ns, "", " ")
-		checkErr(jErr, "run - genGlobalLevelGraph")
+		CheckErr(jErr, "run - genGlobalLevelGraph")
 		brjs := fmt.Sprintf("%s", j)
 		lease := getLeaseNumber()
 		key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIp + "::vrf::global")
@@ -240,7 +240,7 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 			// serialize the data and publish each connection in seperate ETCD key for assembly on a global
 			// view by the aggriagte app
 			j, jErr := json.MarshalIndent(cs, "", " ")
-			checkErr(jErr, "run - genGlobalLevelConnections")
+			CheckErr(jErr, "run - genGlobalLevelConnections")
 			brjs := fmt.Sprintf("%s", j)
 			lease := getLeaseNumber()
 			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + deviceIp + "::vrf::global")
@@ -334,11 +334,11 @@ func roundTripAverage(data string) float64 {
 	// make sure value contains a . so we can set it as a float64 value, if not add a .
 	if strings.Contains(w1, ".") {
 		warn, err = strconv.ParseFloat(w1, 64)
-		checkErr(err, "run - roundTripAverage")
+		CheckErr(err, "run - roundTripAverage")
 	} else {
 		w1 := strings.Join([]string{w1, ".100"}, "")
 		warn, err = strconv.ParseFloat(w1, 64)
-		checkErr(err, "run - roundTripAverage")
+		CheckErr(err, "run - roundTripAverage")
 	}
 	return warn
 }
@@ -359,12 +359,12 @@ func dataSend(data string) float64 {
 	// make sure string has  a . if not add one so we can convert to float64
 	if strings.Contains(n, ".") {
 		normal, err = strconv.ParseFloat(n, 64)
-		checkErr(err, "run - dataSend")
+		CheckErr(err, "run - dataSend")
 
 	} else {
 		w := strings.Join([]string{n, ".100"}, "")
 		normal, err = strconv.ParseFloat(w, 64)
-		checkErr(err, "run - dataSend")
+		CheckErr(err, "run - dataSend")
 	}
 	return normal
 }
@@ -379,12 +379,12 @@ func retransRate(data string) float64 {
 	// if value has no . add one so we can set float64
 	if strings.Contains(n, ".") {
 		danger, err = strconv.ParseFloat(n, 64)
-		checkErr(err, "run - retransRate")
+		CheckErr(err, "run - retransRate")
 
 	} else {
 		w := strings.Join([]string{n, ".100"}, "")
 		danger, err = strconv.ParseFloat(w, 64)
-		checkErr(err, "run - retransRate")
+		CheckErr(err, "run - retransRate")
 	}
 	return danger
 }

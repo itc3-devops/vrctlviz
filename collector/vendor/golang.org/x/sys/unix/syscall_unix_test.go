@@ -103,9 +103,9 @@ func TestPassFD(t *testing.T) {
 	}
 	defer unix.Close(fds[0])
 	defer unix.Close(fds[1])
-	writeFile := os.NewFile(uintptr(fds[0]), "child-writes")
+	WriteFile := os.NewFile(uintptr(fds[0]), "child-writes")
 	readFile := os.NewFile(uintptr(fds[1]), "parent-reads")
-	defer writeFile.Close()
+	defer WriteFile.Close()
 	defer readFile.Close()
 
 	cmd := exec.Command(os.Args[0], "-test.run=^TestPassFD$", "--", tempDir)
@@ -113,7 +113,7 @@ func TestPassFD(t *testing.T) {
 	if lp := os.Getenv("LD_LIBRARY_PATH"); lp != "" {
 		cmd.Env = append(cmd.Env, "LD_LIBRARY_PATH="+lp)
 	}
-	cmd.ExtraFiles = []*os.File{writeFile}
+	cmd.ExtraFiles = []*os.File{WriteFile}
 
 	out, err := cmd.CombinedOutput()
 	if len(out) > 0 || err != nil {

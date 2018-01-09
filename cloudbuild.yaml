@@ -16,9 +16,9 @@ steps:
      ls
      cp collector rootfs/usr/bin/vrctlviz
      ls rootfs/usr/bin
-     mkdir -p ../converter/rootfs/usr/bin
-     cp collector ../converter/rootfs/usr/bin/vrctlviz
-     ls ../converter/rootfs/usr/bin
+     mkdir -p ../server/rootfs/usr/bin
+     cp collector ../server/rootfs/vrctlviz
+     ls ../server/rootfs
      cp collector vrctlviz-alpine
      export GOOS=linux
      export GOARCH=amd64
@@ -34,8 +34,8 @@ steps:
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME", "-f", "collector/Dockerfile", "collector"]
 - name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/converter:$BRANCH_NAME", "-f", "converter/Dockerfile", "converter"]
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/server:$BRANCH_NAME", "-f", "server/Dockerfile", "server"]
 images:
   - "gcr.io/itc3-production/vrctlviz/vizceral:$BRANCH_NAME"
   - "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME"
-  - "gcr.io/itc3-production/vrctlviz/converter:$BRANCH_NAME"
+  - "gcr.io/itc3-production/vrctlviz/server:$BRANCH_NAME"

@@ -92,7 +92,7 @@ func init() {
 		//create your file with desired read/write permissions
 		f, logErr := os.OpenFile(loglocation, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if logErr != nil {
-			checkErr(logErr, "root - log")
+			CheckErr(logErr, "root - log")
 		}
 		//defer f.Close()
 		log.SetOutput(f)

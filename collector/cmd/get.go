@@ -47,21 +47,21 @@ to quickly create a Cobra application.`,
 				TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 			}
 			tlsConfig, err := tlsInfo.ClientConfig()
-			checkErr(err, "common - requestEtcdDialer")
+			CheckErr(err, "common - requestEtcdDialer")
 			ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 			cli, err := clientv3.New(clientv3.Config{
 				Endpoints:   endpoints,
 				DialTimeout: dialTimeout,
 				TLS:         tlsConfig,
 			})
-			checkErr(err, "common - requestEtcdDialer")
+			CheckErr(err, "common - requestEtcdDialer")
 			defer cli.Close() // make sure to close the client
 
 			prefix := os.Args[2]
 			// pull nodes from etcd
 			resp, err := cli.Get(ctx, prefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 			cancel()
-			checkErr(err, "vizceral - genTopLevelView - get node keys")
+			CheckErr(err, "vizceral - genTopLevelView - get node keys")
 
 			// iterate through each key for adding to the array
 			for _, ev := range resp.Kvs {

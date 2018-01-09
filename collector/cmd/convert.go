@@ -30,9 +30,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var viz []VizceralGraph
+
 // convertCmd represents the convert command
 var convertCmd = &cobra.Command{
-	Use:   "convert",
+	Use:   "server",
 	Short: "Reads data from ETCD and converts to vizceral graph format",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -46,7 +48,7 @@ to quickly create a Cobra application.`,
 			log.Println(http.ListenAndServe("127.0.0.1:6060", nil))
 
 		}()
-		resp := etcdHealthMemberListCheck()
+		resp := EtcdHealthMemberListCheck()
 		if resp == true {
 			// fmt.Println("ETCD cluster is healthy")
 			vizAutoRun()
@@ -125,10 +127,37 @@ func genGlobalLevelGraph() {
 	df := os.Getenv("TRAFFIC_URL")
 	dataFile := string("/usr/src/app/dist/" + df)
 	j, jErr := json.MarshalIndent(ns, "", " ")
-	checkErr(jErr, "Viz - Top level global vrf view")
+	CheckErr(jErr, "Viz - Top level global vrf view")
 	brjs := fmt.Sprintf("%s", j)
 	fmt.Println(brjs)
-	writeFile(dataFile, brjs)
+	WriteFile(dataFile, brjs)
+}
+
+// create top level graph for api calls
+func genApiGlobalLevelGraph(w http.ResponseWriter, r *http.Request) {
+
+	// Set vars
+	renderer := "global"
+	name := "edge"
+	maxvol := float64(50000.100)
+
+	// Generate node level region/service hierarchy
+	regionServiceNodes := regionServiceNodes()
+	regionServiceConnections := regionServiceConnections()
+
+	ns := VizceralGraph{
+		Renderer:    renderer,
+		Name:        name,
+		MaxVolume:   maxvol,
+		Nodes:       regionServiceNodes,
+		Connections: regionServiceConnections,
+	}
+	// n := fmt.Sprintf("%v", ns)
+	// serialize and write data to file
+
+	fmt.Println("serializing data")
+	viz = append(viz, ns)
+	json.NewEncoder(w).Encode(viz)
 }
 
 // Creates connection information to be loaded into the top level global graph
@@ -143,14 +172,14 @@ func regionServiceConnections() []VizceralConnection {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// create vars
 	vcg := []VizceralConnection{}
@@ -162,7 +191,7 @@ func regionServiceConnections() []VizceralConnection {
 	// get etcd keys based on connection prefix
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
-	checkErr(err, "vizceral - genTopLevelView - get node keys")
+	CheckErr(err, "vizceral - genTopLevelView - get node keys")
 
 	// iterate through each key for adding to the array
 	for _, ev := range resp.Kvs {
@@ -201,14 +230,14 @@ func regionServiceNodes() []VizceralNode {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// create vars
 	vng := []VizceralNode{}
@@ -221,7 +250,7 @@ func regionServiceNodes() []VizceralNode {
 	// pull nodes from etcd
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	cancel()
-	checkErr(err, "vizceral - genTopLevelView - get node keys")
+	CheckErr(err, "vizceral - genTopLevelView - get node keys")
 
 	// iterate through each key for adding to the array
 	for _, ev := range resp.Kvs {
@@ -247,7 +276,7 @@ func regionServiceNodes() []VizceralNode {
 	}
 	// Get timestamp and convert it to proper format
 	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-	time := strintToInt64(ts)
+	time := StrintToInt64(ts)
 
 	vni := VizceralNode{
 		Renderer:    "region",

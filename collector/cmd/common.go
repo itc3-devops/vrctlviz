@@ -112,7 +112,7 @@ func vizFileWrite(v *VizceralGraph) {
 	df := os.Getenv("TRAFFIC_URL")
 	dataFile := string("/usr/src/app/dist/" + df)
 	createFile(dataFile)
-	writeFile(dataFile, sJson)
+	WriteFile(dataFile, sJson)
 }
 
 // Read a Vizceral format file into a graph
@@ -134,12 +134,12 @@ func serializeVizceral(data string) {
 	df := os.Getenv("TRAFFIC_URL")
 	dataFile := string("/usr/src/app/dist/" + df)
 	j, jErr := json.MarshalIndent(data, "", " ")
-	checkErr(jErr, "Viz - Top level global vrf view")
+	CheckErr(jErr, "Viz - Top level global vrf view")
 	brjs := fmt.Sprintf("%s", j)
 	fmt.Println(brjs)
 	deleteFile(dataFile)
 	createFile(dataFile)
-	writeFile(dataFile, brjs)
+	WriteFile(dataFile, brjs)
 
 }
 
@@ -153,7 +153,7 @@ func vizFileReadata(data string) *VizceralGraph {
 	return v
 }
 
-func checkErr(err error, label string) {
+func CheckErr(err error, label string) {
 	if err != nil {
 		fmt.Println(err.Error())
 		log.WithFields(log.Fields{"common": label}).Error("NOTIFY - General Error Handler", err)
@@ -216,7 +216,7 @@ func after(value string, a string) string {
 }
 
 // Convert string to int64
-func strintToInt64(s string) int64 {
+func StrintToInt64(s string) int64 {
 	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		panic(err)
@@ -233,12 +233,12 @@ func createFile(path string) {
 	// create file if not exists
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		var file, err = os.Create(path)
-		checkErr(err, "setup - createFile") //okay to call os.exit()
+		CheckErr(err, "setup - createFile") //okay to call os.exit()
 		defer file.Close()
 	}
 }
 
-func writeFile1(path string, contents string) {
+func WriteFile1(path string, contents string) {
 	err := ioutil.WriteFile(path, []byte(contents), 0666)
 	if err != nil {
 		log.Fatal(err)
@@ -247,7 +247,7 @@ func writeFile1(path string, contents string) {
 
 var mutex = &sync.Mutex{}
 
-func writeFile(path string, contents string) {
+func WriteFile(path string, contents string) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	err := ioutil.WriteFile(path, []byte(contents), 0666)
@@ -264,12 +264,12 @@ func deleteFile(path string) error {
 	// create file if not exists
 	if os.IsNotExist(err) {
 		var file, err = os.Create(path)
-		checkErr(err, "generic - label") //okay to call os.exit()
+		CheckErr(err, "generic - label") //okay to call os.exit()
 		defer file.Close()
 	}
 	// delete file
 	var err1 = os.Remove(path)
-	checkErr(err1, "Delete file")
+	CheckErr(err1, "Delete file")
 	return err1
 }
 
@@ -277,7 +277,7 @@ func mkDir(dir string) {
 
 	if _, mkDirErr := os.Stat(dir); os.IsNotExist(mkDirErr) {
 		mkDirErr = os.MkdirAll(dir, 0755)
-		checkErr(mkDirErr, "Make directory")
+		CheckErr(mkDirErr, "Make directory")
 	}
 }
 
@@ -285,7 +285,7 @@ func hostCommandWithOutput(command string, arguments []string) (string, error) {
 	out, err := exec.Command(command, arguments...).Output()
 	if err != nil {
 		fmt.Sprintf("Failed to execute command: %s", err)
-		checkErr(err, "common - hostCommandWithOutput")
+		CheckErr(err, "common - hostCommandWithOutput")
 	}
 	outStr := string(out)
 	return outStr, err
@@ -373,7 +373,7 @@ func routableIP(network string, ip net.IP) net.IP {
 	return nil
 }
 
-func etcdHealthMemberListCheck() bool {
+func EtcdHealthMemberListCheck() bool {
 	var r bool
 
 	dialTimeout := 5 * time.Second
@@ -386,14 +386,14 @@ func etcdHealthMemberListCheck() bool {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
 	resp, err := cli.MemberList(ctx)
@@ -422,14 +422,14 @@ func etcdPutShortLease(key string, value string) {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// request lease from ETCD
 	LeaseResp, leaseErr := cli.Grant(ctx, 30)
@@ -466,14 +466,14 @@ func etcdPutLongLease(key string, value string) {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// request lease from ETCD
 	LeaseResp, leaseErr := cli.Grant(ctx, 300)
@@ -510,14 +510,14 @@ func etcdPutExistingLease(key string, value string) {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	opts := getEtcdPutOptions()
 	log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
@@ -578,20 +578,20 @@ func etcdKeyGetPrefix(key string) (string, string) {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
 	for i := range make([]int, 3) {
 		_, err = cli.Put(ctx, fmt.Sprintf("key_%d", i), "value")
 		cancel()
-		checkErr(err, "common - etcdKeyGetPrefix")
+		CheckErr(err, "common - etcdKeyGetPrefix")
 	}
 
 	resp, err := cli.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -627,7 +627,7 @@ func writeCollectorScript() {
 	filePath := string(home + "collect.sh")
 	createFile(filePath)
 
-	writeFile(filePath, collectScriptString)
+	WriteFile(filePath, collectScriptString)
 	changeFilePermissions(filePath, 0777)
 }
 
@@ -642,14 +642,14 @@ func requestEtcdLease() {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
 	// request lease from ETCD
@@ -671,7 +671,7 @@ func requestEtcdLease() {
 
 	// Write lease to vars file for reference
 	createFile("/root/lease")
-	writeFile("/root/lease", lSimple)
+	WriteFile("/root/lease", lSimple)
 
 	// start lease keepalive
 	// leaseKeepAliveCommandFunc(LeaseResp.ID)
@@ -691,14 +691,14 @@ func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 		TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
 	}
 	tlsConfig, err := tlsInfo.ClientConfig()
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: dialTimeout,
 		TLS:         tlsConfig,
 	})
-	checkErr(err, "common - requestEtcdDialer")
+	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
 	respc, kerr := cli.KeepAlive(context.Background(), id)

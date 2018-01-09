@@ -224,7 +224,7 @@ func (s *server) Shutdown() {
 	s.cleanup()
 }
 
-func writeFile(path string, contents []byte) {
+func WriteFile(path string, contents []byte) {
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)
@@ -258,20 +258,20 @@ func newServer(t *testing.T) *server {
 
 	for k, v := range testdata.PEMBytes {
 		filename := "id_" + k
-		writeFile(filepath.Join(dir, filename), v)
-		writeFile(filepath.Join(dir, filename+".pub"), ssh.MarshalAuthorizedKey(testPublicKeys[k]))
+		WriteFile(filepath.Join(dir, filename), v)
+		WriteFile(filepath.Join(dir, filename+".pub"), ssh.MarshalAuthorizedKey(testPublicKeys[k]))
 	}
 
 	for k, v := range testdata.SSHCertificates {
 		filename := "id_" + k + "-cert.pub"
-		writeFile(filepath.Join(dir, filename), v)
+		WriteFile(filepath.Join(dir, filename), v)
 	}
 
 	var authkeys bytes.Buffer
 	for k, _ := range testdata.PEMBytes {
 		authkeys.Write(ssh.MarshalAuthorizedKey(testPublicKeys[k]))
 	}
-	writeFile(filepath.Join(dir, "authorized_keys"), authkeys.Bytes())
+	WriteFile(filepath.Join(dir, "authorized_keys"), authkeys.Bytes())
 
 	return &server{
 		t:          t,
