@@ -3,14 +3,14 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: nginx
-  tag: stable
-  pullPolicy: IfNotPresent
-service:
-  name: nginx
-  type: ClusterIP
-  externalPort: 80
-  internalPort: 80
+  repository: gcr.io/itc3-production/vrctlviz/collector
+  tag: master
+  pullPolicy: Always
+etcd:
+  endpoints: https://etcd.itc3.io:2379
+  cert:
+  cacert:
+  key:
 ingress:
   enabled: false
   # Used to create an Ingress record.

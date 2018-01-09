@@ -1,0 +1,12 @@
+# Define ETCD cluster to use and set certificates
+# ETCD cluster must support ETCD v3
+etcdCluster:
+  tls: true
+  # set path to certificate or set environment variable manually for ETCDCTL_ENDPOINTS
+    etcdEndpoints: https://etcd.cluster.io:2375
+    # set path to certificate or set environment variable manually for ETCDCTL_CERT
+    etcdctlCert: ~/certs/etcd.pem
+    # set path to certificate or set environment variable manually for ETCDCTL_CACERT
+    etcdctlCa: ~/certs/ca.pem
+    # set path to certificate or set environment variable manually for ETCDCTL_KEY
+    etcdctlKey: ~/certs/etcd.key
