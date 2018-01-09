@@ -8,28 +8,29 @@ steps:
      . /builder/prepare_workspace.inc 
      prepare_workspace || exit
      env | sort
+     cd collector
      ls
      go get
      go build
      mkdir -p rootfs/usr/bin
      cp vrctlviz rootfs/usr/bin/vrctlviz
      ls rootfs/usr/bin
-     mkdir -p converter/rootfs/usr/bin
-     cp vrctlviz converter/rootfs/usr/bin/vrctlviz
-     ls converter/rootfs/usr/bin
+     mkdir -p ../converter/rootfs/usr/bin
+     cp vrctlviz ../converter/rootfs/usr/bin/vrctlviz
+     ls ../converter/rootfs/usr/bin
      cp vrctlviz vrctlviz-alpine
      export GOOS=linux
      export GOARCH=amd64
      go get
      go build
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'vrctlviz', 'gs://itc3-public/']
+  args: ['cp', 'collector/vrctlviz', 'gs://itc3-public/']
 - name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', 'vrctlviz-alpine', 'gs://itc3-public/']
+  args: ['cp', 'collector/vrctlviz-alpine', 'gs://itc3-public/']
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/vizceral:$BRANCH_NAME", "-f", "vizceral/Dockerfile", "vizceral"]
 - name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME", "-f", "Dockerfile", "."]
+  args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/collector:$BRANCH_NAME", "-f", "collector/Dockerfile", "collector"]
 - name: "gcr.io/cloud-builders/docker"
   args: ["build", "-t", "gcr.io/itc3-production/vrctlviz/converter:$BRANCH_NAME", "-f", "converter/Dockerfile", "converter"]
 images:
