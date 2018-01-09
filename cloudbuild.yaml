@@ -13,6 +13,7 @@ steps:
      go get
      go build
      mkdir -p rootfs/usr/bin
+     ls
      cp vrctlviz rootfs/usr/bin/vrctlviz
      ls rootfs/usr/bin
      mkdir -p ../converter/rootfs/usr/bin
