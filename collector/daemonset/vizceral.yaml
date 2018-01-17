@@ -1,0 +1,26 @@
+
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    k8s-app: vizceral
+  name: vizceral
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: vizceral
+    spec:
+      serviceAccountName: vizceral
+      containers:
+      - name: vizceral
+        image: gcr.io/itc3-production/vrctlviz/collector:master
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 250m
+            memory: 250Mi
+        securityContext:
+          privileged: true
+      hostNetwork: true

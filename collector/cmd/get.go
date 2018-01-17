@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/pkg/transport"
 	"github.com/spf13/cobra"
 )
 
@@ -40,19 +39,12 @@ to quickly create a Cobra application.`,
 			dialTimeout := 5 * time.Second
 			requestTimeout := 10 * time.Second
 			endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
-			tlsInfo := transport.TLSInfo{
 
-				CertFile:      os.Getenv("ETCDCTL_CERT"),
-				KeyFile:       os.Getenv("ETCDCTL_KEY"),
-				TrustedCAFile: os.Getenv("ETCDCTL_CACERT"),
-			}
-			tlsConfig, err := tlsInfo.ClientConfig()
 			CheckErr(err, "common - requestEtcdDialer")
 			ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 			cli, err := clientv3.New(clientv3.Config{
 				Endpoints:   endpoints,
 				DialTimeout: dialTimeout,
-				TLS:         tlsConfig,
 			})
 			CheckErr(err, "common - requestEtcdDialer")
 			defer cli.Close() // make sure to close the client
