@@ -30,9 +30,10 @@ import (
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
+	"github.com/coreos/etcd/pkg/transport"
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
-	etc_tools "github.com/itc3-devops/etcd-tools"
+	"github.com/spf13/viper"
 )
 
 var home string
@@ -47,6 +48,13 @@ var prefixKey string
 var etcdCertString string
 var etcdCaCertString string
 var etcdKeyString string
+var requestTimeout = 10 * time.Second
+var key string
+var value string
+var lease string
+var LeaseHex clientv3.LeaseID
+var cli *clientv3.Client
+var dialTimeout = 5 * time.Second
 
 // vizceral generates output in the NetflixOSS vizceral format
 // https://github.com/Netflix/vizceral/blob/master/DATAFORMATS.md
@@ -102,6 +110,76 @@ type VizceralGraph struct {
 	MaxVolume   float64              `json:"maxVolume,omitempty"` // relative base for levels animation
 	Nodes       []VizceralNode       `json:"nodes,omitempty"`
 	Connections []VizceralConnection `json:"connections,omitempty"`
+}
+
+// Endpoints : Define ETCD Endpoints
+var Endpoints []string
+
+// EtcdApi : Define ETCD Api version
+var EtcdApi string
+
+// tlsInfo : Define TLS connection for ETCD
+var tlsInfo transport.TLSInfo
+
+// GetEndpointsConfig : Return ETCD Endpoints
+func GetEndpointsConfig() []string {
+	os.Setenv("ETCDCTL_API", viper.GetString("Etcd.Api"))
+	//fmt.Println("ETCD Api version: ", os.Getenv("ETCDCTL_API"))
+	os.Setenv("ETCDCTL_ENDPOINTS", viper.GetString("Etcd.Endpoints"))
+	//fmt.Println("ETCD ENDPOINTS: ", os.Getenv("ETCDCTL_ENDPOINTS"))
+	os.Setenv("ETCDCTL_CERT", viper.GetString("Etcd.Cert"))
+	//fmt.Println("ETCD CERT: ", os.Getenv("ETCDCTL_CERT"))
+	os.Setenv("ETCDCTL_CACERT", viper.GetString("Etcd.CaCert"))
+	//fmt.Println("ETCD CACERT: ", os.Getenv("ETCDCTL_CACERT"))
+	os.Setenv("ETCDCTL_KEY", viper.GetString("Etcd.Key"))
+	//fmt.Println("ETCD KEY: ", os.Getenv("ETCDCTL_KEY"))
+	return []string{(viper.GetViper().GetString("Etcd.Endpoints"))}
+}
+
+// GetTlsInfo : Return configured TLS info
+func GetTlsInfo() transport.TLSInfo {
+	return transport.TLSInfo{
+		CertFile:      viper.GetViper().GetString("Etcd.Cert"),
+		KeyFile:       viper.GetViper().GetString("Etcd.Key"),
+		TrustedCAFile: viper.GetViper().GetString("Etcd.CaCert"),
+	}
+}
+
+// GetEtcdTlsCli : Return new ETCD TLS client
+func GetEtcdTlsCli() (*clientv3.Client, error) {
+	Endpoints := GetEndpointsConfig()
+	tlsInfo := GetTlsInfo()
+
+	tlsConfig, err := tlsInfo.ClientConfig()
+	if err != nil {
+		//fmt.Println("Error setting TLS config: ", err)
+		log.WithFields(log.Fields{"common": "EtcdTlsDialer"}).Error("Failed to create TLS config: ", err)
+		os.Exit(1)
+	}
+	return clientv3.New(clientv3.Config{
+		Endpoints:   Endpoints,
+		DialTimeout: dialTimeout,
+		TLS:         tlsConfig,
+	})
+}
+
+// GetEtcdCli : Return new ETCD dialer
+func GetEtcdCli() (*clientv3.Client, error) {
+	Endpoints := GetEndpointsConfig()
+	return clientv3.New(clientv3.Config{
+		Endpoints: Endpoints,
+	})
+}
+
+// GetEtcdClient : Return new ETCD dialer based on config TLS settings
+func GetEtcdClient() (*clientv3.Client, error) {
+	if viper.IsSet("Etcd.Tls") {
+		//fmt.Println("Creating new TLS Etcd Dialer")
+		return GetEtcdTlsCli()
+	}
+	//fmt.Println("Creating new ETCD Dialer")
+	return GetEtcdCli()
+
 }
 
 // print a Vizceral graph as json
@@ -376,12 +454,9 @@ func routableIP(network string, ip net.IP) net.IP {
 func EtcdHealthMemberListCheck() bool {
 	var r bool
 
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
+	cli, err := GetEtcdClient()
 
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
@@ -402,15 +477,12 @@ func EtcdHealthMemberListCheck() bool {
 }
 
 func etcdPutShortLease(key string, value string) {
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
+	cli, err := GetEtcdClient()
 
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
@@ -439,15 +511,12 @@ func etcdPutShortLease(key string, value string) {
 }
 
 func etcdPutLongLease(key string, value string) {
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
+	cli, err := GetEtcdClient()
 
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
@@ -476,14 +545,12 @@ func etcdPutLongLease(key string, value string) {
 }
 
 func etcdPutExistingLease(key string, value string) {
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
+
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
+	cli, err := GetEtcdClient()
 
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
@@ -536,15 +603,11 @@ func changeFilePermissions(path string, permission os.FileMode) {
 
 func etcdKeyGetPrefix(key string) (string, string) {
 
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
-
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
+	cli, err := GetEtcdClient()
 
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
@@ -593,15 +656,12 @@ func writeCollectorScript() {
 }
 
 func requestEtcdLease() {
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
+	cli, err := GetEtcdClient()
 
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
@@ -635,15 +695,12 @@ func requestEtcdLease() {
 // leaseKeepAliveCommandFunc executes the "lease keep-alive" command.
 func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 	id := leaseId
-	dialTimeout := 5 * time.Second
-
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 
 	CheckErr(err, "common - requestEtcdDialer")
 
 	// Get EtcD client
-	cli, err := etc_tools.GetEtcdClient()
-	
+	cli, err := GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
