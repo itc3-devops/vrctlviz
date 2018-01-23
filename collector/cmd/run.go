@@ -158,6 +158,7 @@ func genRegionalServiceLevelData() {
 		brjs := fmt.Sprintf("%s", j)
 		lease := getLeaseNumber()
 		key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIp + "::vrf::global")
+		fmt.Println("Print ETCD data: ", key, lease, brjs)
 		// upload to etcd and associate with our lease for automatic cleanup
 		etcdPutLongLease(key, brjs)
 	}
@@ -232,6 +233,8 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 			Class:    class,
 		}
 
+		css := fmt.Sprintln(cs)
+		fmt.Println("Print json output: ", cs)
 		// Run some filters to make sure we don't have empty values
 		if source == "" {
 		} else if target == "" {
@@ -244,6 +247,7 @@ func genGlobalLevelConnections(stats string, deviceIp string) {
 			brjs := fmt.Sprintf("%s", j)
 			lease := getLeaseNumber()
 			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + deviceIp + "::vrf::global")
+			fmt.Println("Publishing to ETCD: ", key, lease, brjs)
 			// Copy value to etcd and associate with our existing lease for automatic cleanup
 			etcdPutShortLease(key, brjs)
 		}
