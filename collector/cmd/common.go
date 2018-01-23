@@ -32,6 +32,7 @@ import (
 	"github.com/coreos/etcd/clientv3"
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
+	etc_tools "github.com/itc3-devops/etcd-tools"
 )
 
 var home string
@@ -379,10 +380,9 @@ func EtcdHealthMemberListCheck() bool {
 	requestTimeout := 10 * time.Second
 	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
@@ -408,10 +408,10 @@ func etcdPutShortLease(key string, value string) {
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// request lease from ETCD
@@ -445,10 +445,10 @@ func etcdPutLongLease(key string, value string) {
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	// request lease from ETCD
@@ -481,10 +481,10 @@ func etcdPutExistingLease(key string, value string) {
 	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 	opts := getEtcdPutOptions()
@@ -542,10 +542,10 @@ func etcdKeyGetPrefix(key string) (string, string) {
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
@@ -599,10 +599,10 @@ func requestEtcdLease() {
 
 	CheckErr(err, "common - requestEtcdDialer")
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
@@ -641,10 +641,9 @@ func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 
 	CheckErr(err, "common - requestEtcdDialer")
 
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
-	})
+	// Get EtcD client
+	cli, err := etc_tools.GetEtcdClient()
+	
 	CheckErr(err, "common - requestEtcdDialer")
 	defer cli.Close() // make sure to close the client
 
