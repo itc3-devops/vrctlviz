@@ -185,8 +185,16 @@ func genRegionServiceConnections(data string, deviceIp string) ([]VizceralConnec
 // Creates connection information to be loaded into the top level global graph
 func genGlobalLevelConnections(stats string, deviceIp string) {
 
+	var err error
+
+	source, err = externalIP()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(source)
+
 	// Create vars
-	var source string
+
 	var target string
 	var metrics VizceralLevels
 	var meta VizceralMetadata
@@ -300,17 +308,14 @@ func parseTargetMetricsProtocol(final string, source string) (string, VizceralLe
 		fmt.Println("Print si: ", si)
 		// Include any string that has .
 		if strings.Contains(si, ".") {
-
-			// Drop any string with / by invoking a nul action
+			fmt.Println("Print full stats output: ", si)
+			// Drop any string with / by invoking a null action
 			if strings.Contains(si, "/") {
 				fmt.Println("Dropping this value / filter: ", si)
 				// Drop any strings that have the letter r by invoking a nul action
 			} else if strings.Contains(si, "r") {
 				fmt.Println("Dropping this value r filter: ", si)
 				// Drop anything that matches our own source address to filter out loops
-			} else if strings.Contains(si, source) {
-				fmt.Println("Dropping this value source filter: ", si)
-				// Of the strings that are left, include any string that has :
 			} else if strings.Contains(si, ":") {
 				fmt.Println("Print values that passed all filters: ", si)
 				// target ip is listed before the : and the protocol is listed after the :
