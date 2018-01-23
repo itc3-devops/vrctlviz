@@ -10,7 +10,7 @@ steps:
      env | sort
      cd collector
      ls
-     go get
+     go get -u
      go build
      mkdir -p rootfs/usr/bin
      ls
