@@ -144,27 +144,13 @@ func genRegionalServiceLevelData() {
 		// Generate global level connections between nodes
 		genGlobalLevelConnections(cs)
 
-		vng := []VizceralNode{}
-		vn := VizceralNode{}
-
-		// Generate node level region/service hierarchy
-		rn := genRegionServiceNodes()
-		srn := fmt.Sprintln("%s", rn)
-		err = json.Unmarshal([]byte(srn), &vn)
-		if err != nil {
-			//fmt.Println(err)
-		}
-		vng = append(vng, vn)
-
 		regionServiceConnections, notices, metadata := genRegionServiceConnections()
 
-		sla := fmt.Sprintln("%s", LocalAddress)
 		ns := VizceralNode{
 			Renderer:    renderer,
-			Name:        sla,
+			Name:        c.LocalAddress.String(),
 			MaxVolume:   maxvol,
 			Updated:     time,
-			Nodes:       vng,
 			Connections: regionServiceConnections,
 			Notices:     notices,
 			Class:       class,
@@ -188,14 +174,6 @@ func genRegionalServiceLevelData() {
 	}
 }
 
-// Create node level services
-func genRegionServiceNodes() []VizceralNode {
-	// Create interfaces
-	vsg := []VizceralNode{}
-
-	return vsg
-}
-
 // Create service level connections
 func genRegionServiceConnections() ([]VizceralConnection, []VizceralNotice, VizceralMetadata) {
 	// Create interfaces
@@ -211,15 +189,7 @@ func genGlobalLevelConnections(cs procspy.ConnIter) {
 
 	fmt.Printf("TCP Connections:\n")
 	for c := cs.Next(); c != nil; c = cs.Next() {
-		fmt.Printf(" - %v\n", c)
-		Transport := c.Transport
-		fmt.Println("Print Transport: ", Transport)
-		LocalAddress := c.LocalAddress
-		fmt.Println("Print LocalAddress: ", LocalAddress)
-		sla := fmt.Sprintln("%s", LocalAddress)
-		RemoteAddress := c.RemoteAddress
-		fmt.Println("Print RemoteAddress: ", RemoteAddress)
-		sra := fmt.Sprintln("%s", RemoteAddress)
+
 		ProcName := c.Proc.Name
 		fmt.Println("Print ProcName: ", ProcName)
 
@@ -236,8 +206,8 @@ func genGlobalLevelConnections(cs procspy.ConnIter) {
 		}
 
 		cs := VizceralConnection{
-			Source:  sla,
-			Target:  sra,
+			Source:  c.LocalAddress.String(),
+			Target:  c.RemoteAddress.String(),
 			Metrics: m,
 			Class:   class,
 		}
@@ -255,7 +225,7 @@ func genGlobalLevelConnections(cs procspy.ConnIter) {
 			CheckErr(jErr, "run - genGlobalLevelConnections")
 			brjs := fmt.Sprintf("%s", j)
 			lease := getLeaseNumber()
-			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + sla + "::vrf::global")
+			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + string(c.LocalAddress) + "::vrf::global")
 			fmt.Println("Publishing to ETCD: ", key, lease, brjs)
 			// Copy value to etcd and associate with our existing lease for automatic cleanup
 			etcdPutShortLease(key, brjs)
