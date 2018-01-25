@@ -178,7 +178,7 @@ func regionServiceConnections() []VizceralConnection {
 	vc := VizceralConnection{}
 
 	// set vars
-	keyPrefix := "viz/vrctlviz::lease::"
+	keyPrefix := "viz/vrctlviz::"
 
 	// get etcd keys based on connection prefix
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
@@ -230,7 +230,7 @@ func regionServiceNodes() []VizceralNode {
 	vn := VizceralNode{}
 	vc := []VizceralConnection{}
 
-	keyPrefix := "viz/vrctlviz::lease::"
+	keyPrefix := "viz/vrctlviz::"
 
 	// pull nodes from etcd
 	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))

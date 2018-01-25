@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -33,6 +34,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Starting API Server on port 8000")
 		router := mux.NewRouter()
 		router.HandleFunc("/vizceral", genApiGlobalLevelGraph).Methods("GET")
 		log.Fatal(http.ListenAndServe(":8000", router))

@@ -454,15 +454,16 @@ func routableIP(network string, ip net.IP) net.IP {
 func EtcdHealthMemberListCheck() bool {
 	var r bool
 
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	// Get EtcD client
-	cli, err := GetEtcdClient()
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
-
-	resp, err := cli.MemberList(ctx)
-	cancel()
+	resp, err := cli.MemberList(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -478,16 +479,16 @@ func EtcdHealthMemberListCheck() bool {
 
 func etcdPutShortLease(key string, value string) {
 
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-
-	// Get EtcD client
-	cli, err := GetEtcdClient()
-
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 	// request lease from ETCD
-	LeaseResp, leaseErr := cli.Grant(ctx, 30)
+	LeaseResp, leaseErr := cli.Grant(context.Background(), 30)
 	if leaseErr != nil {
 		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
 	}
@@ -498,8 +499,7 @@ func etcdPutShortLease(key string, value string) {
 	}
 
 	log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
-	resp, err := cli.Put(ctx, key, value, opts...)
-	cancel()
+	resp, err := cli.Put(context.Background(), key, value, opts...)
 
 	if err != nil {
 		log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
@@ -512,16 +512,16 @@ func etcdPutShortLease(key string, value string) {
 
 func etcdPutLongLease(key string, value string) {
 
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-
-	// Get EtcD client
-	cli, err := GetEtcdClient()
-
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 	// request lease from ETCD
-	LeaseResp, leaseErr := cli.Grant(ctx, 300)
+	LeaseResp, leaseErr := cli.Grant(context.Background(), 300)
 	if leaseErr != nil {
 		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
 	}
@@ -532,8 +532,7 @@ func etcdPutLongLease(key string, value string) {
 	}
 
 	log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
-	resp, err := cli.Put(ctx, key, value, opts...)
-	cancel()
+	resp, err := cli.Put(context.Background(), key, value, opts...)
 
 	if err != nil {
 		log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
@@ -542,48 +541,6 @@ func etcdPutLongLease(key string, value string) {
 
 	fmt.Println(*resp)
 
-}
-
-func etcdPutExistingLease(key string, value string) {
-
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-
-	// Get EtcD client
-	cli, err := GetEtcdClient()
-
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
-	opts := getEtcdPutOptions()
-	log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Debug("Print etcdPutOptions:  ", opts)
-	resp, err := cli.Put(ctx, key, value, opts...)
-	cancel()
-
-	if err != nil {
-		log.WithFields(log.Fields{"common": "ETCD putLeaseForever"}).Error("Error putting key in ETCD:  ", err)
-
-	}
-
-	fmt.Println(*resp)
-
-}
-
-func getEtcdPutOptions() []clientv3.OpOption {
-
-	ls := readFile("/root/lease")
-	lease := fmt.Sprintf("%s", ls)
-	fmt.Println("Print existing lease: ", lease)
-	id, err := strconv.ParseInt(lease, 16, 64)
-	if err != nil {
-		log.WithFields(log.Fields{"common": "getEtcdPutOptions"}).Error("Error parsing LeaseID:  ", err)
-	}
-
-	opts := []clientv3.OpOption{}
-	if id != 0 {
-		opts = append(opts, clientv3.WithLease(clientv3.LeaseID(id)))
-	}
-
-	return opts
 }
 
 func readFile(path string) []byte {
@@ -603,23 +560,22 @@ func changeFilePermissions(path string, permission os.FileMode) {
 
 func etcdKeyGetPrefix(key string) (string, string) {
 
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-
-	// Get EtcD client
-	cli, err := GetEtcdClient()
-
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 
 	for i := range make([]int, 3) {
-		_, err = cli.Put(ctx, fmt.Sprintf("key_%d", i), "value")
-		cancel()
+		_, err = cli.Put(context.Background(), fmt.Sprintf("key_%d", i), "value")
+
 		CheckErr(err, "common - etcdKeyGetPrefix")
 	}
 
-	resp, err := cli.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
-	cancel()
+	resp, err := cli.Get(context.Background(), key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -657,17 +613,17 @@ func writeCollectorScript() {
 
 func requestEtcdLease() {
 
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-
-	// Get EtcD client
-	cli, err := GetEtcdClient()
-
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 
 	// request lease from ETCD
-	LeaseResp, leaseErr := cli.Grant(ctx, 10)
+	LeaseResp, leaseErr := cli.Grant(context.Background(), 10)
 	if leaseErr != nil {
 		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
 	}
@@ -677,18 +633,11 @@ func requestEtcdLease() {
 
 	leaseKey := strings.Join([]string{"vrctlviz::activeLeases", lSimple}, "::")
 
-	_, err = cli.Put(ctx, leaseKey, lSimple, clientv3.WithLease(LeaseResp.ID))
-	cancel()
+	_, err = cli.Put(context.Background(), leaseKey, lSimple, clientv3.WithLease(LeaseResp.ID))
+
 	if err != nil {
 		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Adding hex lease to active-devices key in Etcd", err)
 	}
-
-	// Write lease to vars file for reference
-	createFile("/root/lease")
-	WriteFile("/root/lease", lSimple)
-
-	// start lease keepalive
-	// leaseKeepAliveCommandFunc(LeaseResp.ID)
 
 }
 
@@ -696,13 +645,14 @@ func requestEtcdLease() {
 func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 	id := leaseId
 
-	CheckErr(err, "common - requestEtcdDialer")
-
-	// Get EtcD client
-	cli, err := GetEtcdClient()
-
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 
 	respc, kerr := cli.KeepAlive(context.Background(), id)
 	if kerr != nil {
@@ -712,13 +662,6 @@ func leaseKeepAliveCommandFunc(leaseId clientv3.LeaseID) {
 		fmt.Println(*resp)
 	}
 
-}
-
-func getLeaseNumber() string {
-	b := readFile("/root/lease")
-	l := string([]byte(b))
-	fmt.Println("Print lease: ", l)
-	return l
 }
 
 func externalIP() string {

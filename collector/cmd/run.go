@@ -17,9 +17,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
 	"time"
 
 	"strconv"
@@ -40,11 +37,6 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		// Start server for exporting expvars
-		go func() {
-			log.Println(http.ListenAndServe("127.0.0.1:6061", nil))
-
-		}()
 		resp := EtcdHealthMemberListCheck()
 		if resp == true {
 			fmt.Println("ETCD cluster is healthy")
@@ -136,7 +128,6 @@ func genRegionalServiceLevelData() {
 
 		// Set vars
 		renderer := "region"
-		deviceIp := os.Getenv("PrivateIP")
 		maxvol := float64(50000.100)
 		class := "normal"
 
@@ -157,20 +148,14 @@ func genRegionalServiceLevelData() {
 			Metadata:    metadata,
 		}
 
-		// add some filters to check for empty values
-		if renderer == "" {
-		} else if deviceIp == "" {
-		} else {
-			// serialize data for host hierarchy
-			j, jErr := json.MarshalIndent(ns, "", " ")
-			CheckErr(jErr, "run - genGlobalLevelGraph")
-			brjs := fmt.Sprintf("%s", j)
-			lease := getLeaseNumber()
-			key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIp + "::vrf::global")
-			fmt.Println("Print ETCD data: ", key, lease, brjs)
-			// upload to etcd and associate with our lease for automatic cleanup
-			etcdPutLongLease(key, brjs)
-		}
+		// serialize data for host hierarchy
+		j, jErr := json.MarshalIndent(ns, "", " ")
+		CheckErr(jErr, "run - genGlobalLevelGraph")
+		brjs := fmt.Sprintf("%s", j)
+		key := string("viz/vrctlviz::" + "::node::" + c.LocalAddress.String() + "::vrf::global")
+		fmt.Println("Print ETCD data: ", key, brjs)
+		// upload to etcd and associate with our lease for automatic cleanup
+		etcdPutLongLease(key, brjs)
 	}
 }
 
@@ -193,7 +178,7 @@ func genGlobalLevelConnections(cs procspy.ConnIter) {
 		ProcName := c.Proc.Name
 		fmt.Println("Print ProcName: ", ProcName)
 
-		var target string
+		//var target string
 		var class string
 
 		// Set vars
@@ -215,22 +200,16 @@ func genGlobalLevelConnections(cs procspy.ConnIter) {
 		css := fmt.Sprintln(cs)
 		fmt.Println("Print json output: ", css)
 		// Run some filters to make sure we don't have empty values
-		if source == "" {
-		} else if target == "" {
-		} else {
 
-			// serialize the data and publish each connection in seperate ETCD key for assembly on a global
-			// view by the aggriagte app
-			j, jErr := json.MarshalIndent(cs, "", " ")
-			CheckErr(jErr, "run - genGlobalLevelConnections")
-			brjs := fmt.Sprintf("%s", j)
-			lease := getLeaseNumber()
-			key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + string(c.LocalAddress) + "::vrf::global")
-			fmt.Println("Publishing to ETCD: ", key, lease, brjs)
-			// Copy value to etcd and associate with our existing lease for automatic cleanup
-			etcdPutShortLease(key, brjs)
-		}
-
+		// serialize the data and publish each connection in seperate ETCD key for assembly on a global
+		// view by the aggriagte app
+		j, jErr := json.MarshalIndent(cs, "", " ")
+		CheckErr(jErr, "run - genGlobalLevelConnections")
+		brjs := fmt.Sprintf("%s", j)
+		key := string("viz/vrctlviz::" + "::connection::" + c.LocalAddress.String() + "::vrf::global")
+		fmt.Println("Publishing to ETCD: ", key, lease, brjs)
+		// Copy value to etcd and associate with our existing lease for automatic cleanup
+		etcdPutShortLease(key, brjs)
 	}
 
 }
