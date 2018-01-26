@@ -176,7 +176,7 @@ func regionServiceConnections() []VizceralConnection {
 	defer cli.Close()
 	// create vars
 	vcg := []VizceralConnection{}
-	vc := VizceralConnection{}
+	vc := []VizceralConnection{}
 
 	// set vars
 	keyPrefix := "viz/vrctlviz::"
@@ -192,20 +192,20 @@ func regionServiceConnections() []VizceralConnection {
 		// convert etcd key/values to strings
 		cKey := fmt.Sprintf("%s", ev.Key)
 		cValue := fmt.Sprintf("%s", ev.Value)
-		// fmt.Println("Print all keys: ", cKey)
-		// filter out anything that is not a connection key
+		fmt.Println("Print all keys: ", cKey)
+
 		if strings.Contains(cKey, "connection") {
-			// fmt.Println("Print all keys that pass connection filter: ", cKey)
-			// fmt.Println("Print lease: ", lease)
-			// fmt.Println("Print etcd connections key: ", cValue)
-			// unmarshall value into struct
+			fmt.Println("Print all keys that pass connection filter: ", cKey)
+			fmt.Println("Print lease: ", lease)
+			fmt.Println("Print etcd connections key: ", cValue)
+			//unmarshall value into struct
 			err := json.Unmarshal([]byte(cValue), &vc)
 			if err != nil {
 				log.Fatalf("failed to decode: %s", err)
 			}
 			// add connection to the interface
-			// fmt.Println("Print unmarshalled connections: ", vc)
-			vcg = append(vcg, vc)
+			fmt.Println("Print unmarshalled connections: ", vc)
+			vcg = append(vcg, vc...)
 
 		}
 	}
