@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"errors"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/spf13/cobra"
@@ -202,6 +203,7 @@ func regionServiceConnections() []VizceralConnection {
 			err := json.Unmarshal([]byte(cValue), &vc)
 			if err != nil {
 				log.Fatalf("failed to decode: %s", err)
+				log.Fatalf("%+v", errors.WithStack(err))
 			}
 			// add connection to the interface
 			fmt.Println("Print unmarshalled connections: ", vc)
