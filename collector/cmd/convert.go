@@ -284,7 +284,17 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 		connections[key] = c
 	}
 
-	return nodes, connections
+	// Convert maps to arrays
+	ret_nodes := []VizceralNode
+	ret_connections := []VizceralConnection
+	for _, n := range nodes {
+		ret_nodes = append(ret_nodes, n)
+	}
+	for _, c := range connections {
+		ret_connections = append(ret_connections, c)
+	}
+
+	return ret_nodes, ret_connections
 }
 
 func regionServiceNodes() []VizceralNode {
