@@ -9,8 +9,6 @@ help:
 
 
 bucket: ## Build go app for alpine and publish to repo
-	export GOOS=linux
-	export GOARCH=386
-	go build -v
+	env GOOS=linux GOARCH=386 go build -v
 	gsutil cp collector gs://itc3-public/vrctlviz-alpine
 	echo "wget https://storage.googleapis.com/itc3-public/vrctlviz-alpine && mv vrctlviz-alpine viz && chmod +x viz"

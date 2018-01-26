@@ -20,6 +20,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +38,15 @@ to quickly create a Cobra application.`,
 		fmt.Println("Starting API Server on port 8000")
 		router := mux.NewRouter()
 		router.HandleFunc("/vizceral", genApiGlobalLevelGraph).Methods("GET")
-		log.Fatal(http.ListenAndServe(":8000", router))
+
+		c := cors.New(cors.Options{
+			AllowedOrigins:   []string{"*"},
+			AllowCredentials: true,
+		})
+
+		handler := c.Handler(router)
+
+		log.Fatal(http.ListenAndServe(":8000", handler))
 
 	},
 }

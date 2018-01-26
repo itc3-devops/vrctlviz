@@ -135,6 +135,10 @@ func genGlobalLevelGraph() {
 // create top level graph for api calls
 func genApiGlobalLevelGraph(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept Content-Type")
+
 	// Set vars
 	renderer := "global"
 	name := "edge"
@@ -155,24 +159,20 @@ func genApiGlobalLevelGraph(w http.ResponseWriter, r *http.Request) {
 	// serialize and write data to file
 
 	fmt.Println("serializing data")
-	viz = append(viz, ns)
-	json.NewEncoder(w).Encode(viz)
+	//viz = append(viz, ns)
+	json.NewEncoder(w).Encode(ns)
 }
 
 // Creates connection information to be loaded into the top level global graph
 func regionServiceConnections() []VizceralConnection {
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
-
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
 	})
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 	// create vars
 	vcg := []VizceralConnection{}
 	vc := VizceralConnection{}
@@ -181,8 +181,8 @@ func regionServiceConnections() []VizceralConnection {
 	keyPrefix := "viz/vrctlviz::"
 
 	// get etcd keys based on connection prefix
-	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
-	cancel()
+	resp, err := cli.Get(context.Background(), keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+
 	CheckErr(err, "vizceral - genTopLevelView - get node keys")
 
 	// iterate through each key for adding to the array
@@ -205,6 +205,7 @@ func regionServiceConnections() []VizceralConnection {
 			// add connection to the interface
 			// fmt.Println("Print unmarshalled connections: ", vc)
 			vcg = append(vcg, vc)
+			
 		}
 	}
 	return vcg
@@ -212,18 +213,15 @@ func regionServiceConnections() []VizceralConnection {
 }
 
 func regionServiceNodes() []VizceralNode {
-	dialTimeout := 5 * time.Second
-	requestTimeout := 10 * time.Second
-	endpoints := []string{(os.Getenv("ETCDCTL_ENDPOINTS"))}
 
-	CheckErr(err, "common - requestEtcdDialer")
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   endpoints,
-		DialTimeout: dialTimeout,
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
 	})
-	CheckErr(err, "common - requestEtcdDialer")
-	defer cli.Close() // make sure to close the client
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
 	// create vars
 	vng := []VizceralNode{}
 	vig := []VizceralNode{}
@@ -233,8 +231,8 @@ func regionServiceNodes() []VizceralNode {
 	keyPrefix := "viz/vrctlviz::"
 
 	// pull nodes from etcd
-	resp, err := cli.Get(ctx, keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
-	cancel()
+	resp, err := cli.Get(context.Background(), keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+
 	CheckErr(err, "vizceral - genTopLevelView - get node keys")
 
 	// iterate through each key for adding to the array
