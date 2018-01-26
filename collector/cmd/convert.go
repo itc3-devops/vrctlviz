@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"errors"
+	"github.com/pkg/errors"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/spf13/cobra"
@@ -276,9 +276,9 @@ func regionServiceNodes() []VizceralNode {
 
 }
 
-func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
+func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 	// Connect to EtcD
-	cli, err := clientv3.New(clientv3.Config{
+	cli, _ := clientv3.New(clientv3.Config{
 		Endpoints:   []string{"etcd:2379"},
 		DialTimeout: 5 * time.Second,
 	})
@@ -287,7 +287,7 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 	defer cli.Close()
 
 	// Get data
-	resp, err := cli.Get(context.Background(),
+	resp, _ := cli.Get(context.Background(),
 						 "viz/vrctlviz::",
 						 clientv3.WithPrefix(),
 						 clientv3.WithSort(clientv3.SortByCreateRevision,
@@ -314,12 +314,13 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 			}
 
 			// Add node to the map if it's not already there
-			if ! nodes[n.Name] {
+			_, ok := nodes[n.Name]
+			if ! ok {
 				nodes[n.Name] = n
 			}
 
 		// Extract the connection
-		case strings.Contains(string(item.key), "connection"):
+		case strings.Contains(string(item.Key), "connection"):
 			var c []VizceralConnection
 
 			// Convert JSON data
@@ -332,7 +333,8 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 
 			for _, con := range c {
 				// Add node to the map if it's not already there
-				if ! raw_connections[con.Source] {
+				_, ok := raw_connections[con.Source]
+				if ! ok {
 					raw_connections[con.Source] = c
 				}
 				break
@@ -341,14 +343,16 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 	}
 
 	// Parse the connections
-	for _, c := range raw_connections {
-		key := c.Source + "->" + c.Target
-		connections[key] = c
+	for _, c_group := range raw_connections {
+		for _, c := range c_group {
+			key := c.Source + "->" + c.Target
+			connections[key] = c
+		}
 	}
 
 	// Convert maps to arrays
-	ret_nodes := []VizceralNode
-	ret_connections := []VizceralConnection
+	ret_nodes := []VizceralNode{}
+	ret_connections := []VizceralConnection{}
 	for _, n := range nodes {
 		ret_nodes = append(ret_nodes, n)
 	}
@@ -360,5 +364,5 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 }
 
 func buildNodesFromConnections(connections map[string]VizceralConnection, nodes *map[string]VizceralNode) {
-	
+
 }
