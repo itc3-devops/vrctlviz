@@ -81,13 +81,9 @@ type VizceralLevels struct {
 
 // One Connection
 type VizceralConnection struct {
-	Source   string           `json:"source,omitempty"`
-	Target   string           `json:"target,omitempty"`
-	Metadata VizceralMetadata `json:"metadata,omitempty"`
-	Metrics  VizceralLevels   `json:"metrics,omitempty"`
-	Status   VizceralLevels   `json:"status,omitempty"`
-	Notices  []VizceralNotice `json:"node,omitempty"`
-	Class    string           `json:"class,omitempty"`
+	Source  string         `json:"source,omitempty"`
+	Target  string         `json:"target,omitempty"`
+	Metrics VizceralLevels `json:"metrics,omitempty"`
 }
 
 // One node (region/service hierarchy)
@@ -521,7 +517,7 @@ func etcdPutLongLease(key string, value string) {
 	}
 	defer cli.Close()
 	// request lease from ETCD
-	LeaseResp, leaseErr := cli.Grant(context.Background(), 300)
+	LeaseResp, leaseErr := cli.Grant(context.Background(), 30)
 	if leaseErr != nil {
 		log.WithFields(log.Fields{"common": "requestEtcdLease"}).Error("Requesting Lease", leaseErr)
 	}

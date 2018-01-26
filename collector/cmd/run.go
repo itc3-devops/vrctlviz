@@ -15,13 +15,17 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
 	"time"
 
+	"regexp"
 	"strconv"
+	"strings"
 
-	"github.com/itc3-devops/procspy"
 	"github.com/spf13/cobra"
 )
 
@@ -37,6 +41,11 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		// Start server for exporting expvars
+		go func() {
+			log.Println(http.ListenAndServe("127.0.0.1:6061", nil))
+
+		}()
 		resp := EtcdHealthMemberListCheck()
 		if resp == true {
 			fmt.Println("ETCD cluster is healthy")
@@ -73,6 +82,7 @@ var normalTraffic string
 var warningTraffic float64
 var metrics VizceralLevels
 var deviceName string
+var deviceIP string
 
 func vizAutoRunCollector() {
 
@@ -103,64 +113,65 @@ func vizAutoRunCollector() {
 }
 
 func genRegionalServiceLevelData() {
-
+	deviceIP = externalIP()
 	// Get timestamp and convert it to proper format
 	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	time := StrintToInt64(ts)
 
-	// Check TCP connections for tincd sessions to determine healthy service
-	lookupProcesses := true
-	cs, err := procspy.Connections(lookupProcesses)
-	if err != nil {
-		panic(err)
+	// Run script to collect vizceral data from local host
+	stats := collectTcpMetrics()
+	fmt.Println("Print stats", stats)
+
+	// Set vars
+	renderer := "region"
+
+	maxvol := float64(50000.100)
+	class := "normal"
+
+	// Generate data for structs
+	// Generate global level connections between nodes
+	genGlobalLevelConnections(stats, deviceIP)
+
+	// Generate node level region/service hierarchy
+	regionServiceNodes := genRegionServiceNodes(stats)
+	regionServiceConnections, notices, _ := genRegionServiceConnections(stats, deviceIP)
+
+	ns := VizceralNode{
+		Renderer:    renderer,
+		Name:        deviceIP,
+		MaxVolume:   maxvol,
+		Updated:     time,
+		Nodes:       regionServiceNodes,
+		Connections: regionServiceConnections,
+		Notices:     notices,
+		Class:       class,
 	}
 
-	for c := cs.Next(); c != nil; c = cs.Next() {
-		fmt.Printf(" - %v\n", c)
-		Transport := c.Transport
-		fmt.Println("Print Transport: ", Transport)
-		LocalAddress := c.LocalAddress
-		fmt.Println("Print LocalAddress: ", LocalAddress)
-		RemoteAddress := c.RemoteAddress
-		fmt.Println("Print RemoteAddress: ", RemoteAddress)
-		ProcName := c.Proc.Name
-		fmt.Println("Print ProcName: ", ProcName)
-
-		// Set vars
-		renderer := "region"
-		maxvol := float64(50000.100)
-		class := "normal"
-
-		// Generate data for structs
-		// Generate global level connections between nodes
-		genGlobalLevelConnections(cs)
-
-		regionServiceConnections, notices, metadata := genRegionServiceConnections()
-
-		ns := VizceralNode{
-			Renderer:    renderer,
-			Name:        c.LocalAddress.String(),
-			MaxVolume:   maxvol,
-			Updated:     time,
-			Connections: regionServiceConnections,
-			Notices:     notices,
-			Class:       class,
-			Metadata:    metadata,
-		}
-
+	// add some filters to check for empty values
+	if renderer == "" {
+	} else if deviceIP == "" {
+	} else {
 		// serialize data for host hierarchy
 		j, jErr := json.MarshalIndent(ns, "", " ")
 		CheckErr(jErr, "run - genGlobalLevelGraph")
 		brjs := fmt.Sprintf("%s", j)
-		key := string("viz/vrctlviz::" + "::node::" + c.LocalAddress.String() + "::vrf::global")
-		fmt.Println("Print ETCD data: ", key, brjs)
+		lease := getLeaseNumber()
+		key := string("viz/vrctlviz::lease::" + lease + "::node::" + deviceIP + "::vrf::global")
 		// upload to etcd and associate with our lease for automatic cleanup
 		etcdPutLongLease(key, brjs)
 	}
 }
 
+// Create node level services
+func genRegionServiceNodes(data string) []VizceralNode {
+	// Create interfaces
+	vsg := []VizceralNode{}
+
+	return vsg
+}
+
 // Create service level connections
-func genRegionServiceConnections() ([]VizceralConnection, []VizceralNotice, VizceralMetadata) {
+func genRegionServiceConnections(data string, deviceIP string) ([]VizceralConnection, []VizceralNotice, VizceralMetadata) {
 	// Create interfaces
 	vcg := []VizceralConnection{}
 	vng := []VizceralNotice{}
@@ -170,46 +181,254 @@ func genRegionServiceConnections() ([]VizceralConnection, []VizceralNotice, Vizc
 }
 
 // Creates connection information to be loaded into the top level global graph
-func genGlobalLevelConnections(cs procspy.ConnIter) {
+func genGlobalLevelConnections(stats string, deviceIP string) {
 
-	fmt.Printf("TCP Connections:\n")
-	for c := cs.Next(); c != nil; c = cs.Next() {
+	// Create vars
 
-		ProcName := c.Proc.Name
-		fmt.Println("Print ProcName: ", ProcName)
+	var target string
+	var metrics VizceralLevels
+	//var notices []VizceralNotice
+	//var class string
+	vcg := []VizceralConnection{}
 
-		//var target string
-		var class string
+	// Set vars
+	//class = "normal"
 
-		// Set vars
+	// Read through stats output line by line
+	scanner := bufio.NewScanner(strings.NewReader(stats))
+	for scanner.Scan() {
+		st := (scanner.Text())
+		// Each line of the stats output is represented by 'st'
 
-		class = "normal"
-		m := VizceralLevels{
-			Normal:  10000,
-			Warning: 1,
-			Danger:  1,
+		// Remove spaces and break each value out on its own line for easier filtering
+		input := st
+		re_leadclose_whtsp := regexp.MustCompile(`^[\s\p{Zs}]+|[\s\p{Zs}]+$`)
+		re_inside_whtsp := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
+		final := re_leadclose_whtsp.ReplaceAllString(input, "")
+		final = re_inside_whtsp.ReplaceAllString(final, " ")
+		fmt.Println("Print final: ", final)
+
+		// Filter out metrics we want to use to build out each data struct
+		// Only focus on connections that are in an Established state
+		if strings.Contains(final, "ESTAB") {
+			// Parse our values out of the filtered Established strings
+			target, metrics, _, _ = parseTargetMetricsProtocol(final, deviceIP)
+			fmt.Println("Print target", target)
 		}
 
 		cs := VizceralConnection{
-			Source:  c.LocalAddress.String(),
-			Target:  c.RemoteAddress.String(),
-			Metrics: m,
-			Class:   class,
+			Source:  deviceIP,
+			Target:  target,
+			Metrics: metrics,
+			//Notices: notices,
+			//Class:   class,
 		}
-
-		css := fmt.Sprintln(cs)
-		fmt.Println("Print json output: ", css)
-		// Run some filters to make sure we don't have empty values
+		vcg = append(vcg, cs)
+	}
+	// Run some filters to make sure we don't have empty values
+	if deviceIP == "" {
+	} else if target == "" {
+	} else {
 
 		// serialize the data and publish each connection in seperate ETCD key for assembly on a global
 		// view by the aggriagte app
-		j, jErr := json.MarshalIndent(cs, "", " ")
+		j, jErr := json.MarshalIndent(vcg, "", " ")
 		CheckErr(jErr, "run - genGlobalLevelConnections")
 		brjs := fmt.Sprintf("%s", j)
-		key := string("viz/vrctlviz::" + "::connection::" + c.LocalAddress.String() + "::vrf::global")
-		fmt.Println("Publishing to ETCD: ", key, lease, brjs)
+		lease := getLeaseNumber()
+		key := string("viz/vrctlviz::lease::" + lease + "::connection::" + ipD + "::ip::" + deviceIP + "::vrf::global")
 		// Copy value to etcd and associate with our existing lease for automatic cleanup
 		etcdPutShortLease(key, brjs)
 	}
 
+}
+
+// Parse out all the node and connection information
+func parseTargetMetricsProtocol(final string, source string) (string, VizceralLevels, int, []VizceralNotice) {
+
+	var warningTraffic float64
+	var normalTraffic float64
+	var dangerTraffic float64
+
+	// create vars
+	var ip string
+	notices := []VizceralNotice{}
+	var protocol int
+	// Split on space to filter on continus strings only.
+	result := strings.Split(final, " ")
+
+	// Iterate over each attribute in TCP string
+	for i := range result {
+		si := fmt.Sprintf("%s", result[i])
+		if strings.Contains(si, "rtt:") {
+			// Set warning level traffic based on RTT which indicates congestion and collisions on the network
+			// Send attribute to function to set struct
+			warningTraffic = roundTripAverage(si)
+		}
+		if strings.Contains(si, "Mbps") {
+			// Set normal level traffic by data sent
+			// Send attribute to function to set struct
+			normalTraffic = dataSend(si)
+		}
+
+		if strings.Contains(si, "retrans") {
+			// Set danger level based on retransmissions
+			// Send attribute to function to set struct
+			dangerTraffic = retransRate(si)
+		}
+
+		// pass levels to function to add to struct
+		metrics = formatMetricsStruct(normalTraffic, warningTraffic, dangerTraffic)
+
+		// parse out and format notices
+		notices = parseFormatNotices(si)
+
+		// Parse out target IP address
+		fmt.Println("Print si: ", si)
+		// Include any string that has .
+		if strings.Contains(si, ".") {
+
+			// Drop any string with / by invoking a nul action
+			if strings.Contains(si, "/") {
+				fmt.Println("Dropping this value / filter: ", si)
+				// Drop any strings that have the letter r by invoking a nul action
+			} else if strings.Contains(si, "r") {
+				fmt.Println("Dropping this value r filter: ", si)
+				// Drop anything that matches our own source address to filter out loops
+			} else if strings.Contains(si, ":") {
+				fmt.Println("Print values that passed all filters: ", si)
+				// target ip is listed before the : and the protocol is listed after the :
+				ip = before(si, ":")
+				protocol = 1
+				fmt.Println("Print Connection source: ", source)
+				fmt.Println("Print Connection target parsing output", ip, protocol)
+			}
+		}
+	}
+
+	return ip, metrics, protocol, notices
+}
+
+// parse warning traffic from tcp string
+func roundTripAverage(data string) float64 {
+	// create vars
+	var warn float64
+	var err error
+
+	// set vars
+	// get attribute string that follows rtt
+	w := (after(data, "rtt:"))
+	// remove trailing / and value
+	w1 := (after(w, "/"))
+
+	// make sure value contains a . so we can set it as a float64 value, if not add a .
+	if strings.Contains(w1, ".") {
+		warn, err = strconv.ParseFloat(w1, 64)
+		CheckErr(err, "run - roundTripAverage")
+	} else {
+		w1 := strings.Join([]string{w1, ".100"}, "")
+		warn, err = strconv.ParseFloat(w1, 64)
+		CheckErr(err, "run - roundTripAverage")
+	}
+	return warn
+}
+
+// parse normal traffic from tcp string
+func dataSend(data string) float64 {
+	// create vars
+	var normal float64
+	var err error
+	// set vars
+	// set value to int in front of Mbps
+	n1 := before(data, "Mbps")
+
+	// add a 0 in front of the . to add the volume of the traffic graph
+	n2 := before(n1, ".")
+	n := strings.Join([]string{n2, "0"}, "")
+
+	// make sure string has  a . if not add one so we can convert to float64
+	if strings.Contains(n, ".") {
+		normal, err = strconv.ParseFloat(n, 64)
+		CheckErr(err, "run - dataSend")
+
+	} else {
+		w := strings.Join([]string{n, ".100"}, "")
+		normal, err = strconv.ParseFloat(w, 64)
+		CheckErr(err, "run - dataSend")
+	}
+	return normal
+}
+
+// parse danger traffic from tcp string
+func retransRate(data string) float64 {
+	var danger float64
+	var err error
+	// set vars
+	// set danager level on retransmits
+	n := (after(data, "retrans:0/"))
+	// if value has no . add one so we can set float64
+	if strings.Contains(n, ".") {
+		danger, err = strconv.ParseFloat(n, 64)
+		CheckErr(err, "run - retransRate")
+
+	} else {
+		w := strings.Join([]string{n, ".100"}, "")
+		danger, err = strconv.ParseFloat(w, 64)
+		CheckErr(err, "run - retransRate")
+	}
+	return danger
+}
+
+// parse notices
+// func parseNotices(data string) []VizceralNotice {
+
+// }
+
+// format metrics levels into struct
+func formatMetricsStruct(norm float64, warn float64, dang float64) VizceralLevels {
+
+	m := VizceralLevels{
+		Normal:  norm,
+		Warning: warn,
+		Danger:  dang,
+	}
+
+	// return node group back to main function as a node array formatted with the Node map
+	return m
+}
+
+// format metadata into struct
+func formatMetadataStruct(proto int) VizceralMetadata {
+
+	rMetadata := VizceralMetadata{
+		Streaming: 1,
+	}
+
+	// return node group back to main function as a node array formatted with the Node map
+	return rMetadata
+}
+
+// format notices into struct
+func parseFormatNotices(data string) []VizceralNotice {
+
+	// statically set notices for now
+	ng := []VizceralNotice{}
+
+	n := VizceralNotice{
+		Title:    "Title",
+		Subtitle: "Subtitle",
+		Link:     "http://some.link.here",
+		Severity: 0,
+	}
+	ng = append(ng, n)
+	// return node group back to main function as a node array formatted with the Node map
+	return ng
+}
+
+func getLeaseNumber() string {
+
+	command := "/bin/sh"
+	arguments := []string{"-c", "uuidgen"}
+	stat, _ := hostCommandWithOutput(command, arguments)
+	return stat
 }
