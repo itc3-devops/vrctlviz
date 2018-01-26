@@ -214,6 +214,68 @@ func regionServiceConnections() []VizceralConnection {
 
 }
 
+func regionServiceNodes() []VizceralNode {
+
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		// handle error!
+	}
+	defer cli.Close()
+	// create vars
+	vng := []VizceralNode{}
+	vig := []VizceralNode{}
+	vn := VizceralNode{}
+	vc := []VizceralConnection{}
+
+	keyPrefix := "viz/vrctlviz::"
+
+	// pull nodes from etcd
+	resp, err := cli.Get(context.Background(), keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+
+	CheckErr(err, "vizceral - genTopLevelView - get node keys")
+
+	// iterate through each key for adding to the array
+	for _, ev := range resp.Kvs {
+
+		// convert etcd key/values to strings
+		cKey := fmt.Sprintf("%s", ev.Key)
+		cValue := fmt.Sprintf("%s", ev.Value)
+		// fmt.Println("Print all keys: ", cKey)
+		// filter out anything that is not a node key
+		if strings.Contains(cKey, "node") {
+			// fmt.Println("Print all keys that pass the node filter: ", cKey)
+			// fmt.Println("Print lease: ", lease)
+			// fmt.Println("Print etcd node keys: ", cValue)
+			// unmarshall value into struct
+			err := json.Unmarshal([]byte(cValue), &vn)
+			if err != nil {
+				log.Fatalf("failed to decode: %s", err)
+			}
+			// fmt.Println("Print unmarshalled ndoes: ", vn)
+			// add node to the interface
+			vng = append(vng, vn)
+		}
+	}
+	// Get timestamp and convert it to proper format
+	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+	time := StrintToInt64(ts)
+
+	vni := VizceralNode{
+		Renderer:    "region",
+		Name:        "INTERNET",
+		Connections: vc,
+		Nodes:       vig,
+		Updated:     time,
+	}
+	vng = append(vng, vni)
+
+	return vng
+
+}
+
 func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 	// Connect to EtcD
 	cli, err := clientv3.New(clientv3.Config{
@@ -297,64 +359,6 @@ func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
 	return ret_nodes, ret_connections
 }
 
-func regionServiceNodes() []VizceralNode {
-
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   []string{"etcd:2379"},
-		DialTimeout: 5 * time.Second,
-	})
-	if err != nil {
-		// handle error!
-	}
-	defer cli.Close()
-	// create vars
-	vng := []VizceralNode{}
-	vig := []VizceralNode{}
-	vn := VizceralNode{}
-	vc := []VizceralConnection{}
-
-	keyPrefix := "viz/vrctlviz::"
-
-	// pull nodes from etcd
-	resp, err := cli.Get(context.Background(), keyPrefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
-
-	CheckErr(err, "vizceral - genTopLevelView - get node keys")
-
-	// iterate through each key for adding to the array
-	for _, ev := range resp.Kvs {
-
-		// convert etcd key/values to strings
-		cKey := fmt.Sprintf("%s", ev.Key)
-		cValue := fmt.Sprintf("%s", ev.Value)
-		// fmt.Println("Print all keys: ", cKey)
-		// filter out anything that is not a node key
-		if strings.Contains(cKey, "node") {
-			// fmt.Println("Print all keys that pass the node filter: ", cKey)
-			// fmt.Println("Print lease: ", lease)
-			// fmt.Println("Print etcd node keys: ", cValue)
-			// unmarshall value into struct
-			err := json.Unmarshal([]byte(cValue), &vn)
-			if err != nil {
-				log.Fatalf("failed to decode: %s", err)
-			}
-			// fmt.Println("Print unmarshalled ndoes: ", vn)
-			// add node to the interface
-			vng = append(vng, vn)
-		}
-	}
-	// Get timestamp and convert it to proper format
-	ts := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-	time := StrintToInt64(ts)
-
-	vni := VizceralNode{
-		Renderer:    "region",
-		Name:        "INTERNET",
-		Connections: vc,
-		Nodes:       vig,
-		Updated:     time,
-	}
-	vng = append(vng, vni)
-
-	return vng
-
+func buildNodesFromConnections(connections map[string]VizceralConnection, nodes *map[string]VizceralNode) {
+	
 }
