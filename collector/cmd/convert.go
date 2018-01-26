@@ -147,8 +147,7 @@ func genApiGlobalLevelGraph(w http.ResponseWriter, r *http.Request) {
 	maxvol := float64(50000.100)
 
 	// Generate node level region/service hierarchy
-	regionServiceNodes := regionServiceNodes()
-	regionServiceConnections := regionServiceConnections()
+	regionServiceNodes, regionServiceConnections := fetchDataFromEtcD()
 
 	ns := VizceralGraph{
 		Renderer:    renderer,
@@ -213,6 +212,79 @@ func regionServiceConnections() []VizceralConnection {
 	}
 	return vcg
 
+}
+
+func fetchDataFromEtcD() []VizceralNode, []VizceralConnection {
+	// Connect to EtcD
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"etcd:2379"},
+		DialTimeout: 5 * time.Second,
+	})
+
+	// Close the connection when complete
+	defer cli.Close()
+
+	// Get data
+	resp, err := cli.Get(context.Background(),
+						 "viz/vrctlviz::",
+						 clientv3.WithPrefix(),
+						 clientv3.WithSort(clientv3.SortByCreateRevision,
+						 clientv3.SortDescend))
+
+	// Setup containers
+	nodes := make(map[string]VizceralNode)
+	raw_connections := make(map[string][]VizceralConnection)
+	connections := make(map[string]VizceralConnection)
+
+	// Iterate over the data and extract the nodes and connections
+	for _, item := range resp.Kvs {
+		switch {
+		// Extract the nodes
+		case strings.Contains(string(item.Key), "node"):
+			var n VizceralNode
+
+			// Convert JSON data
+			err := json.Unmarshal([]byte(item.Value), &n)
+
+			// Handle errors
+			if err != nil {
+				log.Fatalf("failed to decode: %s", err)
+			}
+
+			// Add node to the map if it's not already there
+			if ! nodes[n.Name] {
+				nodes[n.Name] = n
+			}
+
+		// Extract the connection
+		case strings.Contains(string(item.key), "connection"):
+			var c []VizceralConnection
+
+			// Convert JSON data
+			err := json.Unmarshal([]byte(item.Value), &c)
+
+			// Handle errors
+			if err != nil {
+				log.Fatalf("failed to decode: %s", err)
+			}
+
+			for _, con := range c {
+				// Add node to the map if it's not already there
+				if ! raw_connections[con.Source] {
+					raw_connections[con.Source] = c
+				}
+				break
+			}
+		}
+	}
+
+	// Parse the connections
+	for _, c := range raw_connections {
+		key := c.Source + "->" + c.Target
+		connections[key] = c
+	}
+
+	return nodes, connections
 }
 
 func regionServiceNodes() []VizceralNode {
