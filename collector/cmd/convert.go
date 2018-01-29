@@ -370,5 +370,69 @@ func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 
 	ret_nodes = append(ret_nodes, vni)
 
-	return ret_nodes, ret_connections
+	parsed_nodes := mergeNodes(ret_nodes, extractNodesFromConnections(ret_connections))
+
+	return parsed_nodes, ret_connections
+}
+
+func extractNodesFromConnections(connections []VizceralConnection) []VizceralNode {
+	nodes_map := make(map[string]VizceralNode)
+	nodes := []VizceralNode{}
+
+	// Go through the connections and extract all the nodes
+	for _, con := range connections {
+		// Extract the Source
+		if _, ok := nodes_map[con.Source]; ! ok {
+			nodes_map[con.Source] = VizceralNode{
+				Renderer:    "region",
+				Name:        con.Source,
+				Connections: []VizceralConnection{},
+				Nodes:       []VizceralNode{},
+				Updated:     time.Now().UTC().Unix(),
+			}
+		}
+
+		// Extract the Target
+		if _, ok := nodes_map[con.Target]; ! ok {
+			nodes_map[con.Source] = VizceralNode{
+				Renderer:    "region",
+				Name:        con.Target,
+				Connections: []VizceralConnection{},
+				Nodes:       []VizceralNode{},
+				Updated:     time.Now().UTC().Unix(),
+			}
+		}
+	}
+
+	// Convert the map into an array
+	for _, n := range nodes_map {
+		nodes = append(nodes, n)
+	}
+
+	return nodes
+}
+
+func mergeNodes(a []VizceralNode, b []VizceralNode) []VizceralNode {
+	nodes_map := make(map[string]VizceralNode)
+	nodes := []VizceralNode{}
+
+	// Start with b as it wins
+	for _, node := range b {
+		if _, ok := nodes_map[node.Name]; ! ok {
+			nodes_map[node.Name] = node
+		}
+	}
+
+	// Now do the same for a
+	for _, node := range a {
+		if _, ok := nodes_map[node.Name]; ! ok {
+			nodes_map[node.Name] = node
+		}
+	}
+
+	// At this point, we're merged and deduped so lets convert back to an array
+	for _, n := range nodes_map {
+		nodes = append(nodes, n)
+	}
+	return nodes
 }
