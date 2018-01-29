@@ -314,8 +314,8 @@ func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 			}
 
 			// Add node to the map if it's not already there
-			_, ok := nodes[n.Name]
-			if ! ok {
+
+			if _, ok := nodes[n.Name]; ! ok {
 				nodes[n.Name] = n
 			}
 
@@ -333,8 +333,7 @@ func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 
 			for _, con := range c {
 				// Add node to the map if it's not already there
-				_, ok := raw_connections[con.Source]
-				if ! ok {
+				if _, ok := raw_connections[con.Source]; ! ok {
 					raw_connections[con.Source] = c
 				}
 				break
@@ -360,9 +359,16 @@ func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 		ret_connections = append(ret_connections, c)
 	}
 
+	// Add internet node
+	vni := VizceralNode{
+		Renderer:    "region",
+		Name:        "INTERNET",
+		Connections: []VizceralConnection{},
+		Nodes:       []VizceralNode{},
+		Updated:     time.Now().UTC().Unix(),
+	}
+
+	ret_nodes = append(ret_nodes, vni)
+
 	return ret_nodes, ret_connections
-}
-
-func buildNodesFromConnections(connections map[string]VizceralConnection, nodes *map[string]VizceralNode) {
-
 }
