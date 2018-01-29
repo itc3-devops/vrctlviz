@@ -141,21 +141,12 @@ func genApiGlobalLevelGraph(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Accept Content-Type")
 	w.Header().Set("content-type", "application/json")
 
-	// Set vars
-	renderer := "global"
-	name := "edge"
-	maxvol := float64(50000.100)
-
 	// Generate node level region/service hierarchy
 	regionServiceNodes, regionServiceConnections := fetchDataFromEtcD()
 
-	ns := VizceralGraph{
-		Renderer:    renderer,
-		Name:        name,
-		MaxVolume:   maxvol,
-		Nodes:       regionServiceNodes,
-		Connections: regionServiceConnections,
-	}
+	// Generate the vizceral graph
+	ns := buildVizceralGraph(regionServiceNodes, regionServiceConnections)
+
 	// n := fmt.Sprintf("%v", ns)
 	// serialize and write data to file
 
@@ -276,6 +267,44 @@ func regionServiceNodes() []VizceralNode {
 
 }
 
+func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) VizceralGraph {
+	// Create INTERNET node
+	internet_node := VizceralNode{
+		Renderer:    "region",
+		Name:        "INTERNET",
+		Updated:     time.Now().UTC().Unix(),
+	}
+
+	// Create region node
+	region_node := VizceralNode{
+		Renderer:    "region",
+		Name:        "EU-West-1",
+		Connections: connections,
+		Nodes:       nodes,
+		Updated:     time.Now().UTC().Unix(),
+	}
+
+	// Create the containers for the nodes and connections
+	graph_nodes := []VizceralNode{}
+	graph_connections := []VizceralConnection{}
+
+	// Add the nodes to the graph containers
+	graph_nodes = append(graph_nodes, internet_node)
+	graph_nodes = append(graph_nodes, region_node)
+
+	// Build the graph
+	graph := VizceralGraph{
+		Renderer:    "global",
+		Name:        "edge",
+		MaxVolume:   float64(50000.100),
+		Nodes:       graph_nodes,
+		Connections: graph_connections,
+	}
+
+	// Return the graph
+	return graph
+}
+
 func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 	// Connect to EtcD
 	cli, _ := clientv3.New(clientv3.Config{
@@ -359,17 +388,7 @@ func fetchDataFromEtcD() ([]VizceralNode, []VizceralConnection) {
 		ret_connections = append(ret_connections, c)
 	}
 
-	// Add internet node
-	vni := VizceralNode{
-		Renderer:    "region",
-		Name:        "INTERNET",
-		Connections: []VizceralConnection{},
-		Nodes:       []VizceralNode{},
-		Updated:     time.Now().UTC().Unix(),
-	}
-
-	ret_nodes = append(ret_nodes, vni)
-
+	// Extract the nodes from the connections
 	parsed_nodes := mergeNodes(ret_nodes, extractNodesFromConnections(ret_connections))
 
 	return parsed_nodes, ret_connections
