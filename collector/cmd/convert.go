@@ -394,7 +394,7 @@ func extractNodesFromConnections(connections []VizceralConnection) []VizceralNod
 
 		// Extract the Target
 		if _, ok := nodes_map[con.Target]; ! ok {
-			nodes_map[con.Source] = VizceralNode{
+			nodes_map[con.Target] = VizceralNode{
 				Renderer:    "region",
 				Name:        con.Target,
 				Connections: []VizceralConnection{},
