@@ -272,7 +272,7 @@ func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) 
 	internet_node := VizceralNode{
 		Renderer:    "region",
 		Name:        "INTERNET",
-		Updated:     time.Now().UTC().Unix(),
+		Updated:     time.Now().UTC().UnixNano(),
 	}
 
 	// Create region node
@@ -281,7 +281,7 @@ func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) 
 		Name:        "EU-West-1",
 		Connections: connections,
 		Nodes:       nodes,
-		Updated:     time.Now().UTC().Unix(),
+		Updated:     time.Now().UTC().UnixNano(),
 	}
 
 	// Create the containers for the nodes and connections
@@ -407,7 +407,7 @@ func extractNodesFromConnections(connections []VizceralConnection) []VizceralNod
 				Name:        con.Source,
 				Connections: []VizceralConnection{},
 				Nodes:       []VizceralNode{},
-				Updated:     time.Now().UTC().Unix(),
+				Updated:     time.Now().UTC().UnixNano(),
 			}
 		}
 
@@ -418,7 +418,7 @@ func extractNodesFromConnections(connections []VizceralConnection) []VizceralNod
 				Name:        con.Target,
 				Connections: []VizceralConnection{},
 				Nodes:       []VizceralNode{},
-				Updated:     time.Now().UTC().Unix(),
+				Updated:     time.Now().UTC().UnixNano(),
 			}
 		}
 	}
