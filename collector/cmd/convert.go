@@ -318,7 +318,7 @@ func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) 
 			Updated:     time.Now().UTC().UnixNano(),
 		}),
 		Updated:     time.Now().UTC().UnixNano(),
-		MaxVolume: 10000,
+		MaxVolume: 100000,
 	}
 
 	// Create the TL connection with random flow metrics
