@@ -31,7 +31,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var viz []VizceralGraph
+var (
+	viz []VizceralGraph
+	connectionCache []VizceralConnection
+	nodeCache []VizceralNode
+)
 
 // convertCmd represents the convert command
 var convertCmd = &cobra.Command{
@@ -268,6 +272,33 @@ func regionServiceNodes() []VizceralNode {
 
 }
 
+func normalizeNodes(nodes []VizceralNode) []VizceralNode {
+	// Add nodes to cache
+	nodeCache = mergeNodes(nodes, nodeCache)
+
+	// Nothing else needed yet.
+
+	return nodeCache
+}
+
+func normalizeConnections(connections []VizceralConnection) []VizceralConnection {
+	// First, zero the cache
+	zeroConnectionCache()
+
+	// Now merge connections and add to the cache
+	connectionCache = mergeConnections(connections, connectionCache)
+
+	return connectionCache
+}
+
+func zeroConnectionCache() {
+	for _, c := range connectionCache {
+		c.Metrics.Normal = 0
+		c.Metrics.Danger = 0
+		c.Metrics.Warning = 0
+	}
+}
+
 func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) VizceralGraph {
 	// Create INTERNET node
 	tl_internet_node := VizceralNode{
@@ -280,8 +311,8 @@ func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) 
 	region_node := VizceralNode{
 		Renderer:    "region",
 		Name:        "EU-West-1",
-		Connections: connections,
-		Nodes:       append(nodes, VizceralNode{
+		Connections: normalizeConnections(connections),
+		Nodes:       append(normalizeNodes(nodes), VizceralNode{
 			Renderer:    "region",
 			Name:        "INTERNET",
 			Updated:     time.Now().UTC().UnixNano(),
@@ -471,4 +502,31 @@ func mergeNodes(a []VizceralNode, b []VizceralNode) []VizceralNode {
 		nodes = append(nodes, n)
 	}
 	return nodes
+}
+
+func mergeConnections(a []VizceralConnection, b []VizceralConnection) []VizceralConnection {
+	connection_map := make(map[string]VizceralConnection)
+	connections := []VizceralConnection{}
+
+	// Start with b as it wins
+	for _, connection := range b {
+		key := connection.Source+"->"+connection.Target
+		if _, ok := connection_map[key]; ! ok {
+			connection_map[key] = connection
+		}
+	}
+
+	// Now do the same for a
+	for _, connection := range a {
+		key := connection.Source+"->"+connection.Target
+		if _, ok := connection_map[key]; ! ok {
+			connection_map[key] = connection
+		}
+	}
+
+	// At this point, we're merged and deduped so lets convert back to an array
+	for _, c := range connection_map {
+		connections = append(connections, c)
+	}
+	return connections
 }
