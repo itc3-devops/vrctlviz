@@ -25,6 +25,7 @@ import (
 	"strings"
 	"time"
 	"github.com/pkg/errors"
+	"math/rand"
 
 	"github.com/coreos/etcd/clientv3"
 	"github.com/spf13/cobra"
@@ -284,13 +285,25 @@ func buildVizceralGraph(nodes []VizceralNode, connections []VizceralConnection) 
 		Updated:     time.Now().UTC().UnixNano(),
 	}
 
+	// Create the TL connection with random flow metrics
+	tl_connection := VizceralConnection{
+		Source: "INTERNET",
+		Target: "EU-West-1",
+		Metrics: VizceralLevels{
+			Normal: rand.Float64() * 1000,
+		},
+	}
+
 	// Create the containers for the nodes and connections
 	graph_nodes := []VizceralNode{}
 	graph_connections := []VizceralConnection{}
 
-	// Add the nodes to the graph containers
+	// Add the nodes to the graph container
 	graph_nodes = append(graph_nodes, internet_node)
 	graph_nodes = append(graph_nodes, region_node)
+
+	// Add the connection to the graph container
+	graph_connections = append(graph_connections, tl_connection)
 
 	// Build the graph
 	graph := VizceralGraph{
