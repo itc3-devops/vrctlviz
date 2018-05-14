@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    name: collector
+  name: collector
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: collector
+  template:
+    metadata:
+      labels:
+        name: collector
+    spec:
+      containers:
+      - image: jpogue/collector:latest
+        imagePullPolicy: Always
+        name: collector
+        resources: {}
+        securityContext:
+          privileged: true
+      hostNetwork: true
+      restartPolicy: Always
+      serviceAccount: default
+      serviceAccountName: default
